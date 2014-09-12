@@ -8,7 +8,7 @@ namespace Luval.Security.Model
     {
         public Role()
         {
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString().Replace("-", "").ToUpperInvariant();
         }
 
         [Key]

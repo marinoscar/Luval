@@ -76,7 +76,7 @@ namespace Luval.Security
 
         public User FindById(string userId)
         {
-            return DataContext.Select<User>(i => i.Id == userId).SingleOrDefault();
+            return DataContext.Select<User>(i => i.Id == userId && i.IsActive).SingleOrDefault();
         }
 
         public Task<User> FindByNameAsync(string userName)
@@ -214,7 +214,6 @@ namespace Luval.Security
                 {
                     UserId = user.Id,
                     Type = claim.Type,
-                    Properties = JsonSerializer.ToJson(claim.Properties),
                     Provider = claim.Issuer,
                     OriginalProvider = claim.OriginalIssuer,
                     ValueType = claim.ValueType,

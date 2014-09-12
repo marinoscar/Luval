@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31DF6C48-7A79-4530-A778-396DEB5A8DEA}</ProjectGuid>
+    <ProjectGuid>{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Luval.Common</RootNamespace>
-    <AssemblyName>Luval.Common</AssemblyName>
+    <RootNamespace>Luval.Tests</RootNamespace>
+    <AssemblyName>Luval.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,27 +24,20 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Build\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fasterflect">
-      <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.1.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Facturero\Code\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,28 +45,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ByteExtensions.cs" />
-    <Compile Include="DateTimeExtension.cs" />
-    <Compile Include="IntExtension.cs" />
-    <Compile Include="IObjectAccesor.cs" />
-    <Compile Include="IObjectCreator.cs" />
-    <Compile Include="IPAddressExtension.cs" />
-    <Compile Include="JsonSerializer.cs" />
-    <Compile Include="NumericBaseConverter.cs" />
-    <Compile Include="ObjectCacheProvider.cs" />
-    <Compile Include="ObjectContainer.cs" />
-    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FastReflectionObjectAccessor.cs" />
-    <Compile Include="SqlFormatter.cs" />
-    <Compile Include="StringExtensions.cs" />
-    <Compile Include="TimeZoneHelper.cs" />
-    <Compile Include="UIntExtension.cs" />
-    <Compile Include="ULongExtension.cs" />
+    <Compile Include="Security\WhenUserManagerIsUsed.cs" />
+    <Compile Include="Stubs\DatabaseStub.cs" />
+    <Compile Include="Stubs\DataReader.cs" />
+    <Compile Include="Stubs\DbCommand.cs" />
+    <Compile Include="Stubs\DbConnection.cs" />
+    <Compile Include="Stubs\DbContextStub.cs" />
+    <Compile Include="Stubs\DbDataParameter.cs" />
+    <Compile Include="Stubs\DbTransactionProviderStub.cs" />
+    <Compile Include="Stubs\DbTransactionStub.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Luval.Common\Luval.Common.csproj">
+      <Project>{31df6c48-7a79-4530-a778-396deb5a8dea}</Project>
+      <Name>Luval.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Luval.Orm\Luval.Orm.csproj">
+      <Project>{a20163b7-c57b-4780-af21-8cb688fc4288}</Project>
+      <Name>Luval.Orm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Luval.Security\Luval.Security.csproj">
+      <Project>{657cd80a-3161-4595-b8a7-ff3f48b2aa86}</Project>
+      <Name>Luval.Security</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

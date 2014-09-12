@@ -13,6 +13,9 @@ namespace Luval.Security.Model
         /// The user id
         /// </summary>
         public string UserId { get; set; }
+        [Relation("UserId", "Id")]
+        public User User { get; set; }
+
         /// <summary>
         /// Gets the provider i.e. Google, Facebook, Twitter, Application
         /// </summary>
@@ -22,10 +25,15 @@ namespace Luval.Security.Model
         /// </summary>
         public string ProviderType { get; set; }
 
+        /// <summary>
+        /// Gets the provider key
+        /// </summary>
+        public string ProviderKey { get; set; }
+
 
         public UserLoginInfo ToUserLoginInfo()
         {
-            return new UserLoginInfo(Provider, UserId);
+            return new UserLoginInfo(Provider, ProviderKey);
         }
     }
 }

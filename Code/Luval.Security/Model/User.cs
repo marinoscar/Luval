@@ -9,7 +9,7 @@ namespace Luval.Security.Model
 
         #region Constructors
 
-        public User() : this(Guid.NewGuid().ToString())
+        public User() : this(Guid.NewGuid().ToString().Replace("-", "").ToUpperInvariant())
         {
         } 
 
@@ -30,8 +30,11 @@ namespace Luval.Security.Model
         public string CountryCode { get; set; }
         public string State { get; set; }
         public string Region { get; set; }
-        public string TimeZone { get; set; }
-        public DateTime Birthday { get; set; }
+        public string Address { get; set; }
+        public string ZipCode { get; set; }
+        public string MsTimeZone { get; set; }
+        public string IsoTimeZone { get; set; }
+        public DateTime? Birthday { get; set; }
         public string JsonSettings { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
@@ -41,10 +44,10 @@ namespace Luval.Security.Model
         public bool IsLocked { get; set; }
         public bool RequirePasswordChange { get; set; }
         public int FailedPasswordAttemptCount { get; set; }
-        public DateTime UtcFailedPasswordAnswerAttemptWindowStart { get; set; }
-        public DateTime UtcLastLoginDate { get; set; }
-        public DateTime UtcLastLockedOutDate { get; set; }
-        public DateTime UtcLastFailedAttempt { get; set; }
+        public DateTime? UtcFailedPasswordAnswerAttemptWindowStart { get; set; }
+        public DateTime? UtcLastLoginDate { get; set; }
+        public DateTime? UtcLastLockedOutDate { get; set; }
+        public DateTime? UtcLastFailedAttempt { get; set; }
 
     }
 }
