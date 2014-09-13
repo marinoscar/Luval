@@ -45,8 +45,8 @@ CREATE TABLE `User`
 
 INSERT INTO `User` VALUES('B13221A21AB44994A6F998BBF63E4243', 'oscar@marin.cr', 'oscar@marin.cr', 'oscar@marin.cr', 'Oscar', 'Marin', 'CR', 'Heredia', 'San Rafael', 'Los Angeles, Calle Ebais, 100E y 350S', 
 '40504', 'Central America', null, '1983-01-19', null, 
-'CpTFQXyeierGS/sIQx4aw0mI+Pye4wDw0Hbz0zZXnc9XvxMhdtGST8oSFaPxb1bQMC29pofQiu1E7AcL+5sWrOva08nQjlsK0Y1e15o/V8FoWFS6eY40LdbdxIBXqDGPTtj+NYnFlZugtq3TbuVBaD+dmgp1zWEQ3KPoy1R+isA=',
-'N6XOGjGeEe9fYDf+l2J5nqBwCgEjuiJp8xO/jJYi/TKasA3fAThkf1NygWs9cse+w/ULw4kVi47O4K1otjGm9/B0WfsTTJtQQBNkoH4LPO/1xQko/Bje34WC83Ug+cBt13BgZeGHdidhX6KbK2Yem64EZ3Mw/Y7jFJKOS6hWZz4=',
+'JNDw7Avrw8puojkmp48Tci/tnhKKHsIQ0P64gx9JYLtQ1ZRQDBVyAYFPujGvM/t+2qSgR8+6IZlDc0bQwntvJEWYhtW/bG3ODLukp/pVuh8JnP5mjEvaiSbYQ+4izXuJakZjtki9lxckPVsVfIefoIPLbRvfR32ixNiy+4f+1NI=',
+'x+a8VzqzXHxrYMNEDeRXrx7Tl6Jiaa6BYdYSb0b7G+FsYeiIwW2Vfi5rvCnRULDdewkUkxU+MAgG3dp9TmWy0NsPSy3LjrY9YOa3QS84kOMlyIrVeJazn85P+8SFyBnt4xODQplep/7SP2pBnAsfHj/pLoIuTFrkhilrJqzrGVk=',
 null, null, true, false, false, 0, null,null,null,null,1, null, utc_timestamp(), utc_timestamp());
 
 CREATE TABLE `UserLogin`

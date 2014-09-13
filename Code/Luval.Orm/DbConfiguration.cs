@@ -67,7 +67,7 @@ namespace Luval.Orm
         private static DatabaseProviderType GetProviderTypeFromConfigFile()
         {
             var providerTypeName = ConfigurationManager.AppSettings["DefaultProviderType"];
-            if (String.IsNullOrWhiteSpace(providerTypeName)) return DatabaseProviderType.None;
+            if (String.IsNullOrWhiteSpace(providerTypeName)) return DatabaseProviderType.MySql;
             DatabaseProviderType providerType;
             var didItWork = Enum.TryParse(providerTypeName, true, out providerType);
             return didItWork ? providerType : DatabaseProviderType.MySql;

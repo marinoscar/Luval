@@ -56,9 +56,19 @@ namespace Luval.Common
 
         public void SetPropertyValue(object target, string propertyName, object value)
         {
-            var key = new Tuple<Type, string>(target.GetType(), propertyName);
-            var provider = ObjectCacheProvider.GetProvider<Tuple<Type, string>, MemberSetter>(ReflectionMemberSetterCacheProvider);
-            var valueMethod = provider.GetCacheItem(key, i => i.Item1.DelegateForSetPropertyValue(i.Item2));
+            var targetType = target.GetType();
+            var propertyProvider =
+                ObjectCacheProvider.GetProvider<Tuple<Type, string>, PropertyInfo>("FastReflectPropertyInfo");
+            var propertyInfo = propertyProvider.GetCacheItem(new Tuple<Type, string>(targetType, propertyName), i => targetType.GetProperty(propertyName));
+            var propertyType = propertyInfo.PropertyType;
+            var key = new Tuple<Type, PropertyInfo>(targetType, propertyInfo);
+            var delegateProvider = ObjectCacheProvider.GetProvider<Tuple<Type, PropertyInfo>, MemberSetter>(ReflectionMemberSetterCacheProvider);
+            var valueMethod = delegateProvider.GetCacheItem(key, i => i.Item1.DelegateForSetPropertyValue(i.Item2.Name));
+            if (!key.Item2.CanWrite) return;
+            if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+                propertyType = Nullable.GetUnderlyingType(propertyType);
+            if (!(propertyType.IsValueType && value == null))
+                value = Convert.ChangeType(value, propertyType);
             valueMethod(target, value);
         }
 

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Security;
 using Luval.Common;
 using Luval.Orm;
 using Luval.Security.Model;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
 
 namespace Luval.Security
 {
-    public class UserStoreProvider : IUserPasswordStore<User, string>, IUserLoginStore<User, string>, IUserClaimStore<User, string>, IRoleStore<Role, string>, IUserRoleStore<User, string>
+    public class UserStoreProvider : ISecurityManager
     {
         #region Constructors
 
@@ -29,11 +32,23 @@ namespace Luval.Security
         public UserStoreProvider(IDataContext dataContext)
         {
             DataContext = dataContext;
+            _passwordProvider = new PasswordProvider();
         }
 
         #endregion
 
-        protected IDataContext DataContext { get; private set; }
+
+        #region Variable Declaration
+        
+        private PasswordProvider _passwordProvider; 
+
+        #endregion
+
+        #region Property Implementation
+        
+        protected IDataContext DataContext { get; private set; } 
+
+        #endregion
 
         #region Method Implementation
 
@@ -76,7 +91,7 @@ namespace Luval.Security
 
         public User FindById(string userId)
         {
-            return DataContext.Select<User>(i => i.Id == userId && i.IsActive).SingleOrDefault();
+            return DataContext.Select<User>(i => i.Id == userId && i.IsActive == true).SingleOrDefault();
         }
 
         public Task<User> FindByNameAsync(string userName)
@@ -86,7 +101,7 @@ namespace Luval.Security
 
         public User FindByName(string userName)
         {
-            return DataContext.Select<User>(i => i.UserName == userName).SingleOrDefault();
+            return DataContext.Select<User>(i => i.UserName == userName && i.IsActive == true).SingleOrDefault();
         }
 
         #endregion
@@ -96,6 +111,49 @@ namespace Luval.Security
         public Task SetPasswordHashAsync(User user, string passwordHash)
         {
             return new Task(() => SetPasswordHash(user, passwordHash));
+        }
+
+        private SignInStatus AreValidCredentials(User user, string password)
+        {
+            var isValid = _passwordProvider.ValidatePassword(password, user.PasswordHash, user.PasswordSalt);
+            if (!isValid && string.IsNullOrWhiteSpace(user.TemporaryPasswordHash))
+                isValid = _passwordProvider.ValidatePassword(password, user.TemporaryPasswordHash,
+                                                             user.TemporaryPasswordSalt);
+            return isValid ? SignInStatus.Success : SignInStatus.Failure;
+        }
+
+
+        public Task<SignInStatus> SignInPasswordAsync(string userName, string password,  bool isPersistent, IOwinContext context)
+        {
+            return new Task<SignInStatus>(() => SignInPassword(userName, password, isPersistent, context));
+        }
+
+        public SignInStatus SignInPassword(string userName, string password, bool isPersistent, IOwinContext context)
+        {
+            var user = FindByName(userName);
+            if (user == null) return SignInStatus.Failure;
+            if (user.IsLocked) return SignInStatus.LockedOut;
+            var passwordValidation = AreValidCredentials(user, password);
+            if (passwordValidation == SignInStatus.Failure) return passwordValidation;
+            SignInPassword(user, context);
+            return SignInStatus.Success;
+        }
+
+        private void SignInPassword(User user, IOwinContext context)
+        {
+            var identity = GetIdentity(user);
+            var authManager = context.Authentication;
+            authManager.SignIn(identity);
+        }
+
+        private ClaimsIdentity GetIdentity(User user)
+        {
+            return new ClaimsIdentity(new []
+                {
+                    new Claim(ClaimTypes.Name, "{0} {1}".Fi(user.Name, user.LastName)), 
+                    new Claim(ClaimTypes.Email, user.PrimaryEmail),
+                    new Claim(ClaimTypes.PrimarySid, user.Id),
+                }, DefaultAuthenticationTypes.ApplicationCookie);
         }
 
         public void SetPasswordHash(User user, string passwordHash)
@@ -396,11 +454,15 @@ namespace Luval.Security
 
         #endregion
 
+        #region Helper Methods
+        
         private void ExecuteCrud(object model, Action<object> action)
         {
             action(model);
             DataContext.SaveChanges();
-        }
+        } 
+
+        #endregion
 
     }
 }
