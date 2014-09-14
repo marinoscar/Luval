@@ -16,6 +16,7 @@ namespace Luval.Security.Model
         public User(string id)
         {
             Id = id;
+            IsActive = true;
         } 
 
         #endregion

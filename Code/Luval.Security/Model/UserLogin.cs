@@ -30,7 +30,6 @@ namespace Luval.Security.Model
         /// </summary>
         public string ProviderKey { get; set; }
 
-
         public UserLoginInfo ToUserLoginInfo()
         {
             return new UserLoginInfo(Provider, ProviderKey);

@@ -70,9 +70,9 @@ namespace Luval.Orm
             foreach (var relation in tableDef.RelatedTables)
             {
                 sb.AppendLine("INNER JOIN {0} ON {1} = {2}".Fi(
-                    GetQualifiedTableName(relation.ForeignKeyColumn.Table),
-                    GetQualifiedColumnName(relation.PrimaryKeyColumn),
-                    GetQualifiedColumnName(relation.ForeignKeyColumn)));
+                    GetQualifiedTableName(relation.PrimaryKeyColumn.Table),
+                    GetQualifiedColumnName(relation.ForeignKeyColumn),
+                    GetQualifiedColumnName(relation.PrimaryKeyColumn)));
             }
             return sb.ToString();
         }

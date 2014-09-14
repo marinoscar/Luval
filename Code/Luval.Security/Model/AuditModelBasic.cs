@@ -4,6 +4,14 @@ namespace Luval.Security.Model
 {
     public class AuditModelBasic
     {
+
+        public AuditModelBasic()
+        {
+            Version = 1;
+            UtcCreatedOn = DateTime.UtcNow;
+            UtcUpdatedOn = DateTime.UtcNow;
+        }
+
         /// <summary>
         /// The record version, it is an incremental value of how many times has the record changed
         /// </summary>

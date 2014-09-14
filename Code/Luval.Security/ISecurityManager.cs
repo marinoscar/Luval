@@ -13,5 +13,6 @@ namespace Luval.Security
     public interface ISecurityManager : IUserPasswordStore<User, string>, IUserLoginStore<User, string>, IUserClaimStore<User, string>, IRoleStore<Role, string>, IUserRoleStore<User, string>
     {
         SignInStatus SignInPassword(string userName, string password, bool isPersistent, IOwinContext context);
+        void SignInExternal(ExternalLoginInfo userLoginInfo, IOwinContext context);
     }
 }

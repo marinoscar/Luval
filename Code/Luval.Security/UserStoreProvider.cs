@@ -37,7 +37,6 @@ namespace Luval.Security
 
         #endregion
 
-
         #region Variable Declaration
         
         private PasswordProvider _passwordProvider; 
@@ -102,6 +101,44 @@ namespace Luval.Security
         public User FindByName(string userName)
         {
             return DataContext.Select<User>(i => i.UserName == userName && i.IsActive == true).SingleOrDefault();
+        }
+
+        private User AssignExternalUser(ExternalLoginInfo userLoginInfo)
+        {
+            var user = new User()
+                {
+                    Name = userLoginInfo.ExternalIdentity.FindFirst(i => i.Type == ClaimTypes.GivenName).Value,
+                    UserName = userLoginInfo.Email, PrimaryEmail = userLoginInfo.Email
+                };
+            user.LoweredUserName = user.UserName.ToLowerInvariant();
+            var userLogin = new UserLogin()
+                {
+                    Provider = userLoginInfo.Login.LoginProvider,
+                    ProviderKey = userLoginInfo.Login.ProviderKey,
+                    ProviderType = DefaultAuthenticationTypes.ExternalCookie,
+                    UserId = user.Id
+                };
+            DataContext.Add(user);
+            DataContext.Add(userLogin);
+            DataContext.SaveChanges();
+            return user;
+        }
+
+        private User FindByExternalLogin(UserLoginInfo loginInfo)
+        {
+            var userLogin =
+                DataContext.Select<UserLogin>(
+                    i => i.ProviderKey == loginInfo.ProviderKey && i.Provider == loginInfo.LoginProvider, false).SingleOrDefault();
+            if (userLogin == null) return null;
+            return userLogin.User;
+        }
+
+        public void SignInExternal(ExternalLoginInfo userLoginInfo, IOwinContext context)
+        {
+            var user = FindByExternalLogin(userLoginInfo.Login) ?? AssignExternalUser(userLoginInfo);
+            var authManager = context.Authentication;
+            var userIdentity = GetIdentity(user);
+            authManager.SignIn(userIdentity);
         }
 
         #endregion
