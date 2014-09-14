@@ -85,11 +85,17 @@ namespace Luval.Security
 
         public Task<User> FindByIdAsync(string userId)
         {
-            return new Task<User>(() => FindById(userId));
+            return new Task<User>(() => FindUserById(userId, false));
         }
 
-        public User FindById(string userId)
+        public User FindUserById(string userId, bool isExternal)
         {
+            if (isExternal)
+            {
+                UserLogin userLogin = DataContext.Select<UserLogin>(i => i.ProviderKey == userId, false).SingleOrDefault();
+                if (userLogin == null || userLogin.User == null) return null;
+                return userLogin.User;
+            }
             return DataContext.Select<User>(i => i.Id == userId && i.IsActive == true).SingleOrDefault();
         }
 
@@ -137,6 +143,7 @@ namespace Luval.Security
         {
             var user = FindByExternalLogin(userLoginInfo.Login) ?? AssignExternalUser(userLoginInfo);
             var authManager = context.Authentication;
+            userLoginInfo.ExternalIdentity.AddClaim(new Claim("UserId", user.Id));
             var userIdentity = GetIdentity(user);
             authManager.SignIn(userIdentity);
         }
@@ -206,7 +213,7 @@ namespace Luval.Security
 
         public string GetPasswordHash(User user)
         {
-            var dbUser = FindById(user.Id);
+            var dbUser = FindUserById(user.Id, false);
             if (dbUser == null) throw new ArgumentException("Invalid user information");
             return dbUser.PasswordHash;
         }
@@ -218,7 +225,7 @@ namespace Luval.Security
 
         public bool HasPassword(User user)
         {
-            var dbUser = FindById(user.Id);
+            var dbUser = FindUserById(user.Id, false);
             return !string.IsNullOrWhiteSpace(dbUser.PasswordHash);
         }
 

@@ -14,5 +14,6 @@ namespace Luval.Security
     {
         SignInStatus SignInPassword(string userName, string password, bool isPersistent, IOwinContext context);
         void SignInExternal(ExternalLoginInfo userLoginInfo, IOwinContext context);
+        User FindUserById(string userId, bool isExternal);
     }
 }
