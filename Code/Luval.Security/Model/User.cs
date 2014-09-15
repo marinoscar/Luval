@@ -24,7 +24,6 @@ namespace Luval.Security.Model
         [Key]
         public string Id { get; private set; }
         public string UserName { get; set; }
-        public string LoweredUserName { get; set; }
         public string PrimaryEmail { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
@@ -49,6 +48,11 @@ namespace Luval.Security.Model
         public DateTime? UtcLastLoginDate { get; set; }
         public DateTime? UtcLastLockedOutDate { get; set; }
         public DateTime? UtcLastFailedAttempt { get; set; }
+
+        public void SetUserId(string userId)
+        {
+            Id = userId;
+        }
 
     }
 }

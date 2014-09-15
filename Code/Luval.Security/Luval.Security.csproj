@@ -100,12 +100,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChallangeResult.cs" />
+    <Compile Include="IdentityExtensions.cs" />
     <Compile Include="ISecurityManager.cs" />
     <Compile Include="KeyReader.cs" />
     <Compile Include="Model\AuditModel.cs" />
     <Compile Include="Model\AuditModelBasic.cs" />
-    <Compile Include="Model\LoginViewModel.cs" />
-    <Compile Include="Model\RegisterViewModel.cs" />
+    <Compile Include="Model\Views\LoginViewModel.cs" />
+    <Compile Include="Model\Views\RegisterViewModel.cs" />
     <Compile Include="Model\Role.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Model\UserClaim.cs" />

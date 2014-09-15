@@ -39,7 +39,7 @@ namespace Luval.Security
 
         #region Variable Declaration
         
-        private PasswordProvider _passwordProvider; 
+        private readonly PasswordProvider _passwordProvider;
 
         #endregion
 
@@ -85,17 +85,17 @@ namespace Luval.Security
 
         public Task<User> FindByIdAsync(string userId)
         {
-            return new Task<User>(() => FindUserById(userId, false));
+            return new Task<User>(() => FindUserById(userId));
         }
 
-        public User FindUserById(string userId, bool isExternal)
+        public User FindUserById(string userId)
         {
-            if (isExternal)
-            {
-                UserLogin userLogin = DataContext.Select<UserLogin>(i => i.ProviderKey == userId, false).SingleOrDefault();
-                if (userLogin == null || userLogin.User == null) return null;
-                return userLogin.User;
-            }
+            //if (isExternal)
+            //{
+            //    UserLogin userLogin = DataContext.Select<UserLogin>(i => i.ProviderKey == userId, false).SingleOrDefault();
+            //    if (userLogin == null || userLogin.User == null) return null;
+            //    return userLogin.User;
+            //}
             return DataContext.Select<User>(i => i.Id == userId && i.IsActive == true).SingleOrDefault();
         }
 
@@ -116,7 +116,6 @@ namespace Luval.Security
                     Name = userLoginInfo.ExternalIdentity.FindFirst(i => i.Type == ClaimTypes.GivenName).Value,
                     UserName = userLoginInfo.Email, PrimaryEmail = userLoginInfo.Email
                 };
-            user.LoweredUserName = user.UserName.ToLowerInvariant();
             var userLogin = new UserLogin()
                 {
                     Provider = userLoginInfo.Login.LoginProvider,
@@ -144,7 +143,7 @@ namespace Luval.Security
             var user = FindByExternalLogin(userLoginInfo.Login) ?? AssignExternalUser(userLoginInfo);
             var authManager = context.Authentication;
             userLoginInfo.ExternalIdentity.AddClaim(new Claim("UserId", user.Id));
-            var userIdentity = GetIdentity(user);
+            var userIdentity = GetIdentity(user, userLoginInfo.ExternalIdentity.Claims);
             authManager.SignIn(userIdentity);
         }
 
@@ -185,19 +184,38 @@ namespace Luval.Security
 
         private void SignInPassword(User user, IOwinContext context)
         {
-            var identity = GetIdentity(user);
+            var identity = GetIdentity(user, null);
             var authManager = context.Authentication;
             authManager.SignIn(identity);
         }
 
-        private ClaimsIdentity GetIdentity(User user)
+        public void SignOut(IOwinContext context)
         {
-            return new ClaimsIdentity(new []
+            var authManager = context.Authentication;
+            authManager.SignOut(DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ApplicationCookie);
+        }
+
+        private ClaimsIdentity GetIdentity(User user, IEnumerable<Claim> claims)
+        {
+            var mode = claims == null
+                           ? DefaultAuthenticationTypes.ApplicationCookie
+                           : DefaultAuthenticationTypes.ExternalCookie;
+            var result = new ClaimsIdentity(mode);
+            if(claims == null)
+                result.AddClaims(new[]
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Name, "{0} {1}".Fi(user.Name, user.LastName)), 
                     new Claim(ClaimTypes.Email, user.PrimaryEmail),
                     new Claim(ClaimTypes.PrimarySid, user.Id),
-                }, DefaultAuthenticationTypes.ApplicationCookie);
+                });
+            else
+            {
+                result.AddClaims(claims);
+            }
+            result.AddClaim(new Claim(IdentityExtensions.ClaimUserId, user.Id));
+            result.AddClaim(new Claim(IdentityExtensions.ClaimUserDisplayName, "{0} {1}".Fi(user.Name, user.LastName)));
+            return result;
         }
 
         public void SetPasswordHash(User user, string passwordHash)
@@ -213,7 +231,7 @@ namespace Luval.Security
 
         public string GetPasswordHash(User user)
         {
-            var dbUser = FindUserById(user.Id, false);
+            var dbUser = FindUserById(user.Id);
             if (dbUser == null) throw new ArgumentException("Invalid user information");
             return dbUser.PasswordHash;
         }
@@ -225,7 +243,7 @@ namespace Luval.Security
 
         public bool HasPassword(User user)
         {
-            var dbUser = FindUserById(user.Id, false);
+            var dbUser = FindUserById(user.Id);
             return !string.IsNullOrWhiteSpace(dbUser.PasswordHash);
         }
 
