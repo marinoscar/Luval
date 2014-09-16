@@ -38,14 +38,14 @@ namespace Luval.Security
         #endregion
 
         #region Variable Declaration
-        
+
         private readonly PasswordProvider _passwordProvider;
 
         #endregion
 
         #region Property Implementation
-        
-        protected IDataContext DataContext { get; private set; } 
+
+        protected IDataContext DataContext { get; private set; }
 
         #endregion
 
@@ -111,10 +111,14 @@ namespace Luval.Security
 
         private User AssignExternalUser(ExternalLoginInfo userLoginInfo)
         {
+            var name = userLoginInfo.DefaultUserName;
+            if (userLoginInfo.ExternalIdentity.HasClaim(i => i.Type == ClaimTypes.Name))
+                name = userLoginInfo.ExternalIdentity.FindFirst(ClaimTypes.Name).Value;
             var user = new User()
                 {
-                    Name = userLoginInfo.ExternalIdentity.FindFirst(i => i.Type == ClaimTypes.GivenName).Value,
-                    UserName = userLoginInfo.Email, PrimaryEmail = userLoginInfo.Email
+                    Name = name,
+                    UserName = userLoginInfo.Email,
+                    PrimaryEmail = userLoginInfo.Email
                 };
             var userLogin = new UserLogin()
                 {
@@ -123,10 +127,17 @@ namespace Luval.Security
                     ProviderType = DefaultAuthenticationTypes.ExternalCookie,
                     UserId = user.Id
                 };
-            DataContext.Add(user);
+            //Check by email
+            var userByEmail = DataContext.Select<User>(i => i.UserName == user.UserName).SingleOrDefault();
+            if(userByEmail == null)
+                DataContext.Add(user);
+            else
+            {
+                userLogin.UserId = userByEmail.Id;
+            }
             DataContext.Add(userLogin);
             DataContext.SaveChanges();
-            return user;
+            return userByEmail ?? user;
         }
 
         private User FindByExternalLogin(UserLoginInfo loginInfo)
@@ -141,10 +152,22 @@ namespace Luval.Security
         public void SignInExternal(ExternalLoginInfo userLoginInfo, IOwinContext context)
         {
             var user = FindByExternalLogin(userLoginInfo.Login) ?? AssignExternalUser(userLoginInfo);
-            var authManager = context.Authentication;
             userLoginInfo.ExternalIdentity.AddClaim(new Claim("UserId", user.Id));
             var userIdentity = GetIdentity(user, userLoginInfo.ExternalIdentity.Claims);
-            authManager.SignIn(userIdentity);
+            SignIn(userIdentity, user, context);
+        }
+
+        private void SignIn(ClaimsIdentity userIdentity, User user, IOwinContext context)
+        {
+            user.UtcLastLoginDate = DateTime.UtcNow;
+            user.UtcUpdatedOn = DateTime.UtcNow;
+            user.FailedPasswordAttemptCount = 0;
+            user.UtcFailedPasswordAnswerAttemptWindowStart = null;
+            user.UtcLastFailedAttempt = null;
+            user.UtcLastLockedOutDate = null;
+            DataContext.Update(user);
+            DataContext.SaveChanges();
+            context.Authentication.SignIn(userIdentity);
         }
 
         #endregion
@@ -158,15 +181,30 @@ namespace Luval.Security
 
         private SignInStatus AreValidCredentials(User user, string password)
         {
+            var timeStamp = DateTime.UtcNow;
             var isValid = _passwordProvider.ValidatePassword(password, user.PasswordHash, user.PasswordSalt);
-            if (!isValid && string.IsNullOrWhiteSpace(user.TemporaryPasswordHash))
+            if (!isValid && !string.IsNullOrWhiteSpace(user.TemporaryPasswordHash))
                 isValid = _passwordProvider.ValidatePassword(password, user.TemporaryPasswordHash,
                                                              user.TemporaryPasswordSalt);
+            if (!isValid)
+            {
+                if (user.UtcFailedPasswordAnswerAttemptWindowStart == null)
+                    user.UtcFailedPasswordAnswerAttemptWindowStart = timeStamp;
+                user.UtcLastFailedAttempt = timeStamp;
+                user.FailedPasswordAttemptCount = user.FailedPasswordAttemptCount + 1;
+                user.UtcUpdatedOn = timeStamp;
+                var durationSinceWindowStart =
+                    timeStamp.Subtract(user.UtcFailedPasswordAnswerAttemptWindowStart.Value).TotalHours;
+                if (durationSinceWindowStart >= 1 && user.FailedPasswordAttemptCount > 5)
+                    user.IsLocked = true;
+                DataContext.Add(user);
+                DataContext.SaveChanges();
+            }
             return isValid ? SignInStatus.Success : SignInStatus.Failure;
         }
 
 
-        public Task<SignInStatus> SignInPasswordAsync(string userName, string password,  bool isPersistent, IOwinContext context)
+        public Task<SignInStatus> SignInPasswordAsync(string userName, string password, bool isPersistent, IOwinContext context)
         {
             return new Task<SignInStatus>(() => SignInPassword(userName, password, isPersistent, context));
         }
@@ -185,8 +223,7 @@ namespace Luval.Security
         private void SignInPassword(User user, IOwinContext context)
         {
             var identity = GetIdentity(user, null);
-            var authManager = context.Authentication;
-            authManager.SignIn(identity);
+            SignIn(identity, user, context);
         }
 
         public void SignOut(IOwinContext context)
@@ -201,11 +238,11 @@ namespace Luval.Security
                            ? DefaultAuthenticationTypes.ApplicationCookie
                            : DefaultAuthenticationTypes.ExternalCookie;
             var result = new ClaimsIdentity(mode);
-            if(claims == null)
+            if (claims == null)
                 result.AddClaims(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Name, "{0} {1}".Fi(user.Name, user.LastName)), 
+                    new Claim(ClaimTypes.Name, user.Name), 
                     new Claim(ClaimTypes.Email, user.PrimaryEmail),
                     new Claim(ClaimTypes.PrimarySid, user.Id),
                 });
@@ -214,7 +251,7 @@ namespace Luval.Security
                 result.AddClaims(claims);
             }
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserId, user.Id));
-            result.AddClaim(new Claim(IdentityExtensions.ClaimUserDisplayName, "{0} {1}".Fi(user.Name, user.LastName)));
+            result.AddClaim(new Claim(IdentityExtensions.ClaimUserDisplayName, user.Name));
             return result;
         }
 
@@ -517,12 +554,12 @@ namespace Luval.Security
         #endregion
 
         #region Helper Methods
-        
+
         private void ExecuteCrud(object model, Action<object> action)
         {
             action(model);
             DataContext.SaveChanges();
-        } 
+        }
 
         #endregion
 

@@ -13,11 +13,11 @@ CREATE TABLE `User`
 	Id varchar(100) NOT NULL PRIMARY KEY,
 	UserName varchar(100) NOT NULL,
 	PrimaryEmail varchar(100) NOT NULL,
-	Name varchar(100) NOT NULL,
-	LastName varchar(100) NULL,
+	Name varchar(200) NOT NULL,
+	Website varchar(200) NULL,
 	CountryCode varchar(4) NULL,
-	State varchar(20) NULL,
 	Region varchar(100) NULL,
+	City varchar(100) NULL,
 	Address varchar(100) NULL,
 	ZipCode varchar(100) NULL,
 	MsTimeZone varchar(100) NULL,
@@ -42,8 +42,8 @@ CREATE TABLE `User`
 	UtcUpdatedOn datetime NOT NULL
 );
 
-INSERT INTO `User` VALUES('B13221A21AB44994A6F998BBF63E4243', 'oscar@marin.cr', 'oscar@marin.cr', 'Oscar', 'Marin', 'CR', 'Heredia', 'San Rafael', 'Los Angeles, Calle Ebais, 100E y 350S', 
-'40504', 'Central America', null, '1983-01-19', null, 
+INSERT INTO `User` VALUES('B13221A21AB44994A6F998BBF63E4243', 'oscar@marin.cr', 'oscar@marin.cr', 'Oscar Marin', 'http://marin.cr/', 'CR', 'Heredia', 'San Rafael', 'Los Angeles, Calle Ebais, 100E y 350S', 
+'40504', 'Central America Standard Time', 'America/Costa_Rica', '1983-01-19', null, 
 'JNDw7Avrw8puojkmp48Tci/tnhKKHsIQ0P64gx9JYLtQ1ZRQDBVyAYFPujGvM/t+2qSgR8+6IZlDc0bQwntvJEWYhtW/bG3ODLukp/pVuh8JnP5mjEvaiSbYQ+4izXuJakZjtki9lxckPVsVfIefoIPLbRvfR32ixNiy+4f+1NI=',
 'x+a8VzqzXHxrYMNEDeRXrx7Tl6Jiaa6BYdYSb0b7G+FsYeiIwW2Vfi5rvCnRULDdewkUkxU+MAgG3dp9TmWy0NsPSy3LjrY9YOa3QS84kOMlyIrVeJazn85P+8SFyBnt4xODQplep/7SP2pBnAsfHj/pLoIuTFrkhilrJqzrGVk=',
 null, null, true, false, false, 0, null,null,null,null,1, null, utc_timestamp(), utc_timestamp());
@@ -115,4 +115,3 @@ CREATE TABLE `UserClaim`
 	UtcUpdatedOn datetime NOT NULL,
 	FOREIGN KEY (`UserId`) REFERENCES `User`(`Id`)
 );
-

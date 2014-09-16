@@ -9,6 +9,7 @@ namespace Luval.Security.Model.Views
         public string UserPassword { get; set; }
         public string ConfirUserPassword { get; set; }
         public string Name { get; set; }
-        public string LastName { get; set; }
+        public string Country { get; set; }
+        public string Website { get; set; }
     }
 }
