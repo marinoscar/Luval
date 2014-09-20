@@ -33,7 +33,8 @@ namespace Luval.Orm
         {
         }
 
-        public DbContext(Database db): this(db, DbConfiguration.Get<ISqlLanguageProvider>())
+        public DbContext(Database db)
+            : this(db, DbConfiguration.Get<ISqlLanguageProvider>())
         {
         }
 
@@ -131,7 +132,7 @@ namespace Luval.Orm
             return
                 Database.ExecuteToList<T>(LanguageProvider.Select<T>(expression, orderBy, orderByDescending, skip, take,
                                                                       lazyLoading));
-        } 
+        }
 
         #endregion
 
@@ -145,7 +146,9 @@ namespace Luval.Orm
             {
                 var list = modelType.Value.GetItems();
                 var items = list.Where(i => i.Status != DataListItemStatus.Deleted);
-                sb.AppendFormat("{0};\n",LanguageProvider.Upsert(items.Select(i => i.Value)));
+                var sql = LanguageProvider.Upsert(items.Select(i => i.Value));
+                if (string.IsNullOrWhiteSpace(sql)) continue;
+                sb.AppendFormat("{0};\n", sql);
             }
             return sb.Length <= 0 ? 0 : Database.ExecuteNonQuery(sb.ToString());
         }
@@ -183,7 +186,7 @@ namespace Luval.Orm
             }
             if (sb.Length <= 0) return 0;
             return Database.ExecuteNonQuery(sb.ToString());
-        } 
+        }
 
         #endregion
     }

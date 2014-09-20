@@ -38,14 +38,14 @@ namespace Luval.Tests.Security
         [Test]
         public void ItShouldFindUserById()
         {
-            var result = _userStore.FindById("user1");
+            var result = _userStore.FindUserById("user1");
             Assert.AreEqual("user1@user.com", result.PrimaryEmail);
         }
 
         [Test]
         public void ItShouldNotBringInactiveUsersOnLookup()
         {
-            Assert.IsNull(_userStore.FindById("user2"));
+            Assert.IsNull(_userStore.FindUserById("user2"));
         }
 
     }

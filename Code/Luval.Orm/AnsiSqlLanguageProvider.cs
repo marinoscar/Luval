@@ -82,7 +82,7 @@ namespace Luval.Orm
 
         public virtual string Insert<T>(T model)
         {
-            var modelType = typeof(T);
+            var modelType = model.GetType();
             var tableDef = _helper.GetTableDefinition(modelType);
             var columns = tableDef.Columns.Where(i => !i.IsAutoIncrement);
             var columnNames = columns.Select(i => _helper.GetQualifiedColumnName(i));
@@ -118,7 +118,7 @@ namespace Luval.Orm
 
         public virtual string Update<T>(T model)
         {
-            var modelType = typeof(T);
+            var modelType = model.GetType();
             var tableDef = _helper.GetTableDefinition(modelType);
             var primaryKeys = tableDef.Columns.Where(i => i.IsKey);
             var columns = tableDef.Columns.Where(i => !primaryKeys.Contains(i));
@@ -132,13 +132,13 @@ namespace Luval.Orm
             sb.AppendFormat("{0}\n", string.Join(", ", updateValues));
             sb.AppendFormat("WHERE\n");
             sb.AppendFormat("{0}\n", string.Join(" AND ", updateKeys));
-            sb.AppendFormat("{0}/\n", QueryEndComment);
+            sb.AppendFormat("\n{0}\n", QueryEndComment);
             return sb.ToString();
         }
 
         public virtual string Delete<T>(T model)
         {
-            var modelType = typeof(T);
+            var modelType = model.GetType();
             var tableDef = _helper.GetTableDefinition(modelType);
             var primaryKeys = tableDef.Columns.Where(i => i.IsKey);
             var updateKeys = new List<string>(primaryKeys.Count());
@@ -147,7 +147,7 @@ namespace Luval.Orm
             sb.AppendFormat("{0}\n", QueryBeginComment);
             sb.AppendFormat("DELETE FROM {0} ", _helper.GetQualifiedTableName(tableDef));
             sb.AppendFormat("WHERE {0}", string.Join(" AND ", updateKeys));
-            sb.AppendFormat("{0}/\n", QueryEndComment);
+            sb.AppendFormat("\n{0}\n", QueryEndComment);
             return sb.ToString();
         }
 

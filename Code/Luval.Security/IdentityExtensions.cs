@@ -11,18 +11,27 @@ namespace Luval.Security
     public static class IdentityExtensions
     {
         public const string ClaimUserId = "ApplicationUserId";
-        public const string ClaimUserDisplayName = "ApplicationUserName";
+        public const string ClaimUserDisplayName = "ApplicationUserDisplayName";
+        public const string ClaimUserName = "ApplicationUserName";
 
         public static string GetApplicationUserId(this IIdentity identity)
         {
-            var claim = GetClaim(identity, ClaimUserId);
-            if (claim == null) return string.Empty;
-            return claim.Value;
+            return GetApplicationClaimValue(identity, ClaimUserId);
         }
 
         public static string GetApplicationUserDisplayName(this IIdentity identity)
         {
-            var claim = GetClaim(identity, ClaimUserDisplayName);
+            return GetApplicationClaimValue(identity, ClaimUserDisplayName);
+        }
+
+        public static string GetApplicationUserName(this IIdentity identity)
+        {
+            return GetApplicationClaimValue(identity, ClaimUserName);
+        }
+
+        private static string GetApplicationClaimValue(this IIdentity identity, string type)
+        {
+            var claim = GetClaim(identity, type);
             if (claim == null) return string.Empty;
             return claim.Value;
         }

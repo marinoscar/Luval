@@ -1,4 +1,4 @@
-﻿namespace Luval.Security.Model
+﻿namespace Luval.Orm.Models
 {
     public class AuditModel : AuditModelBasic
     {

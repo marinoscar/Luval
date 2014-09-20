@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Luval.Security.Model
+namespace Luval.Orm.Models
 {
     public class AuditModelBasic
     {

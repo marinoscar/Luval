@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Luval.Orm.DataAnnotations;
+using Luval.Orm.Models;
 
 namespace Luval.Security.Model
 {

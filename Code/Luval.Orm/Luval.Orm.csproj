@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnsiSqlLanguageProvider.cs" />
+    <Compile Include="CountryRepository.cs" />
     <Compile Include="DataAnnotations\AutoIncrementAttribute.cs" />
     <Compile Include="DataAnnotations\RelationAttribute.cs" />
     <Compile Include="Database.cs" />
@@ -64,6 +65,14 @@
     <Compile Include="ISqlExpressionProvider.cs" />
     <Compile Include="ISqlLanguageProvider.cs" />
     <Compile Include="IUnitOfWork.cs" />
+    <Compile Include="Models\AuditModel.cs" />
+    <Compile Include="Models\AuditModelBasic.cs" />
+    <Compile Include="Models\AutoIncrementModel.cs" />
+    <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\IAutoIncrementModel.cs" />
+    <Compile Include="Models\IdModel.cs" />
+    <Compile Include="Models\IdModelWithAudit.cs" />
+    <Compile Include="Models\IdModelWithAuditBasic.cs" />
     <Compile Include="MySqlLanguageProvider.cs" />
     <Compile Include="SqlDialectProvider.cs" />
     <Compile Include="NullDbTransactionProvider.cs" />

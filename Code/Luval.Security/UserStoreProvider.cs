@@ -251,6 +251,7 @@ namespace Luval.Security
                 result.AddClaims(claims);
             }
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserId, user.Id));
+            result.AddClaim(new Claim(IdentityExtensions.ClaimUserName, user.UserName));
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserDisplayName, user.Name));
             return result;
         }
