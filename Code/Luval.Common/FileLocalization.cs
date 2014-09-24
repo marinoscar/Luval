@@ -39,13 +39,20 @@ namespace Luval.Common
 
         #region Method Implementation
 
+
+        public static ILocalizationProvider GetLocalizationProvider()
+        {
+            return GetLocalizationProvider("es");
+        }
+
         public static ILocalizationProvider GetLocalizationProvider(string cultureCode)
         {
-            return new FileLocalization(cultureCode, PathHelper.GetPathForFile(@"\Localization"));
+            return GetLocalizationProvider(cultureCode, @"\Localization");
         }
 
         public static ILocalizationProvider GetLocalizationProvider(string cultureCode, string relativeFileName)
         {
+
             return  new FileLocalization(cultureCode, PathHelper.GetPathForFile(relativeFileName));
         }
 
