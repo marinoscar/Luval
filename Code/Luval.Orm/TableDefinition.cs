@@ -86,6 +86,7 @@ namespace Luval.Orm
                     continue;
                 }
                 var column = GetColumnFromProperty(property);
+                column.FieldType = property.PropertyType;
                 column.Table = this;
                 AddColumn(column);
             }
@@ -145,6 +146,7 @@ namespace Luval.Orm
     public class ColumnDefinition
     {
         public TableDefinition Table { get; set; }
+        public Type FieldType { get; set; }
         public string FieldName { get; set; }
         public string ColumnName { get; set; }
         public int Ordinal { get; set; }

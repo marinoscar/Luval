@@ -103,6 +103,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="IdentityExtensions.cs" />
     <Compile Include="ISecurityManager.cs" />
+    <Compile Include="IUserAuthenticationAction.cs" />
     <Compile Include="KeyReader.cs" />
     <Compile Include="Model\Views\LoginViewModel.cs" />
     <Compile Include="Model\Views\RegisterViewModel.cs" />

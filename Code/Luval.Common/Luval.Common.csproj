@@ -71,6 +71,7 @@
     <Compile Include="SqlFormatter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TimeZoneHelper.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="UIntExtension.cs" />
     <Compile Include="ULongExtension.cs" />
   </ItemGroup>

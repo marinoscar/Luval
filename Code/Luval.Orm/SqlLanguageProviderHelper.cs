@@ -20,12 +20,17 @@ namespace Luval.Orm
 
         public string GetQualifiedColumnAndValue(ColumnDefinition column, object model)
         {
-            return "{0} = {1}".Fi(GetQualifiedColumnName(column), GetColumnValue(model, column));
+            return "{0} = {1}".Fi(GetQualifiedColumnName(column), GetColumnSqlValue(model, column));
         }
 
-        public string GetColumnValue(object model, ColumnDefinition column)
+        public string GetColumnSqlValue(object model, ColumnDefinition column)
         {
-            return _objectAccesor.GetPropertyValue(model, column.FieldName).ToSql();
+            return GetColumnValue(model, column).ToSql();
+        }
+
+        public object GetColumnValue(object model, ColumnDefinition column)
+        {
+            return _objectAccesor.GetPropertyValue(model, column.FieldName);
         }
 
         public string GetQualifiedTableName(TableDefinition table)

@@ -96,8 +96,8 @@ namespace Luval.Orm
             sb.AppendFormat("INSERT INTO {0} ({1}) VALUES ({2})",
                             tableName,
                             qualifiedColumnNames,
-                            string.Join(",", columnValues.Select(i => _helper.GetColumnValue(model, i))));
-            sb.AppendFormat("{0}/\n", QueryEndComment);
+                            string.Join(",", columnValues.Select(i => _helper.GetColumnSqlValue(model, i))));
+            sb.AppendFormat("{0}\n", QueryEndComment);
             return sb.ToString();
         }
 

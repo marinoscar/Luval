@@ -176,7 +176,7 @@ namespace Luval.Orm
             ObjectContainer.Register<IDbTransactionProvider>(transactionProvider);
         } 
 
-        internal static T Get<T>()
+        public static T Get<T>()
         {
             var isRegistered = ObjectContainer.IsRegistered<T>();
             if(!isRegistered && !_isInitialized)

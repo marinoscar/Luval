@@ -87,13 +87,8 @@ namespace Luval.Orm
             var count = 0;
             var transaction = new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>());
             count += DeleteRecords(transaction);
-            if (LanguageProvider.IsUpsertSupported)
-                count += UpsertRecords(transaction);
-            else
-            {
-                count += InsertRecords(transaction);
-                count += UpdateRecords(transaction);
-            }
+            count += InsertRecords(transaction);
+            count += UpdateRecords(transaction);
             _items.Clear();
             return count;
         }
@@ -156,7 +151,7 @@ namespace Luval.Orm
         private int InsertRecords(IDbTransactionProvider transactionProvider)
         {
             return ProcessRecord(transactionProvider, (i => i.Status == DataListItemStatus.Added),
-                                 LanguageProvider.Update);
+                                 LanguageProvider.Insert);
         }
 
         private int UpdateRecords(IDbTransactionProvider transactionProvider)

@@ -60,7 +60,7 @@ namespace Luval.Orm
                             string.Join(",",columns.Select(i => _helper.GetQualifiedColumnName(i))));
             foreach (var item in items)
             {
-                sb.AppendFormat("({0}),", string.Join(",", columns.Select(i => _helper.GetColumnValue(item, i))));
+                sb.AppendFormat("({0}),", string.Join(",", columns.Select(i => _helper.GetColumnSqlValue(item, i))));
             }
             sb.Length--; /*remove last , */
             sb.AppendLine();

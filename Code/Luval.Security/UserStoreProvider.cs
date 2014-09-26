@@ -18,21 +18,22 @@ namespace Luval.Security
         #region Constructors
 
         public UserStoreProvider()
-            : this(new DbContext())
+            : this(new DbContext(), new EmptyUserAuthenticationAction())
         {
 
         }
 
         public UserStoreProvider(string connString)
-            : this(new DbContext(connString))
+            : this(new DbContext(connString), new EmptyUserAuthenticationAction())
         {
 
         }
 
-        public UserStoreProvider(IDataContext dataContext)
+        public UserStoreProvider(IDataContext dataContext, IUserAuthenticationAction userAuthenticationAction)
         {
             DataContext = dataContext;
             _passwordProvider = new PasswordProvider();
+            _userAuthenticationAction = userAuthenticationAction;
         }
 
         #endregion
@@ -40,6 +41,7 @@ namespace Luval.Security
         #region Variable Declaration
 
         private readonly PasswordProvider _passwordProvider;
+        private IUserAuthenticationAction _userAuthenticationAction;
 
         #endregion
 
@@ -129,7 +131,7 @@ namespace Luval.Security
                 };
             //Check by email
             var userByEmail = DataContext.Select<User>(i => i.UserName == user.UserName).SingleOrDefault();
-            if(userByEmail == null)
+            if (userByEmail == null)
                 DataContext.Add(user);
             else
             {
@@ -168,6 +170,7 @@ namespace Luval.Security
             DataContext.Update(user);
             DataContext.SaveChanges();
             context.Authentication.SignIn(userIdentity);
+            _userAuthenticationAction.OnSuccessfulAuthentication(user, userIdentity);
         }
 
         #endregion
@@ -212,12 +215,17 @@ namespace Luval.Security
         public SignInStatus SignInPassword(string userName, string password, bool isPersistent, IOwinContext context)
         {
             var user = FindByName(userName);
-            if (user == null) return SignInStatus.Failure;
-            if (user.IsLocked) return SignInStatus.LockedOut;
-            var passwordValidation = AreValidCredentials(user, password);
-            if (passwordValidation == SignInStatus.Failure) return passwordValidation;
+            var result = SignInStatus.Success;
+            if (user == null) result = SignInStatus.Failure;
+            if (user != null && result != SignInStatus.Failure && user.IsLocked) result = SignInStatus.LockedOut;
+            result = AreValidCredentials(user, password);
+            if (result != SignInStatus.Success)
+            {
+                _userAuthenticationAction.OnUnSuccessfulAuthentication(user);
+                return result;
+            }
             SignInPassword(user, context);
-            return SignInStatus.Success;
+            return result;
         }
 
         private void SignInPassword(User user, IOwinContext context)
@@ -253,6 +261,7 @@ namespace Luval.Security
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserId, user.Id));
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserName, user.UserName));
             result.AddClaim(new Claim(IdentityExtensions.ClaimUserDisplayName, user.Name));
+            result.AddClaims(_userAuthenticationAction.GetCustomClaims(user, result));
             return result;
         }
 
@@ -564,5 +573,21 @@ namespace Luval.Security
 
         #endregion
 
+    }
+
+    internal class EmptyUserAuthenticationAction : IUserAuthenticationAction
+    {
+        public void OnSuccessfulAuthentication(User user, ClaimsIdentity identity)
+        {
+        }
+
+        public void OnUnSuccessfulAuthentication(User user)
+        {
+        }
+
+        public IEnumerable<Claim> GetCustomClaims(User user, ClaimsIdentity identity)
+        {
+            return new List<Claim>(1);
+        }
     }
 }
