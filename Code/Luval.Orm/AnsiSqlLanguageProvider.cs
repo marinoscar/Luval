@@ -156,6 +156,11 @@ namespace Luval.Orm
             throw  new InvalidOperationException("Upsert is not supported for provider {0}".Fi(GetType().FullName));
         }
 
+        public virtual string GetLastIdentityInsert()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

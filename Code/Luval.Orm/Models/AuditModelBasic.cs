@@ -23,7 +23,7 @@ namespace Luval.Orm.Models
         /// <summary>
         /// Utc Timestamp of when the record was created
         /// </summary>
-        public DateTime UtcCreatedOn { get; set; }
+        public DateTime? UtcCreatedOn { get; set; }
         /// <summary>
         /// Utc Timestamp of when the record was updated
         /// </summary>

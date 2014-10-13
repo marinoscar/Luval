@@ -61,6 +61,7 @@
     <Compile Include="IDbLogger.cs" />
     <Compile Include="IDbTransactionProvider.cs" />
     <Compile Include="IDictionaryLoader.cs" />
+    <Compile Include="IAutoIncrement.cs" />
     <Compile Include="ISqlDialectProvider.cs" />
     <Compile Include="ISqlExpressionProvider.cs" />
     <Compile Include="ISqlLanguageProvider.cs" />

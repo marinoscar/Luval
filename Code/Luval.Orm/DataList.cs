@@ -246,7 +246,7 @@ namespace Luval.Orm
         }
         public T Item { get; set; }
         public object Value { get { return Item; } }
-        public DataListItemStatus Status { get; private set; }
+        public DataListItemStatus Status { get; set; }
 
         protected internal void UpdateStatus()
         {
@@ -291,6 +291,6 @@ namespace Luval.Orm
     public interface IDataListItem
     {
         object Value { get; }
-        DataListItemStatus Status { get; }
+        DataListItemStatus Status { get; set; }
     }
 }

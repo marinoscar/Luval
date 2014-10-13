@@ -84,12 +84,22 @@ namespace Luval.Orm
 
         public virtual int SaveChanges()
         {
+            return SaveChanges(new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>()));
+        }
+
+        public virtual int SaveChanges(DbTransactionProvider transaction)
+        {
             var count = 0;
-            var transaction = new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>());
             count += DeleteRecords(transaction);
             count += InsertRecords(transaction);
             count += UpdateRecords(transaction);
-            _items.Clear();
+            foreach (var item in _items)
+            {
+                foreach (var valueItem in item.Value.GetItems())
+                {
+                    valueItem.Status = DataListItemStatus.Unchanged;
+                }
+            }
             return count;
         }
 
@@ -151,36 +161,45 @@ namespace Luval.Orm
         private int InsertRecords(IDbTransactionProvider transactionProvider)
         {
             return ProcessRecord(transactionProvider, (i => i.Status == DataListItemStatus.Added),
-                                 LanguageProvider.Insert);
+                                 LanguageProvider.Insert, "Insert");
         }
 
         private int UpdateRecords(IDbTransactionProvider transactionProvider)
         {
             return ProcessRecord(transactionProvider, (i => i.Status == DataListItemStatus.Updated),
-                                 LanguageProvider.Update);
+                                 LanguageProvider.Update, "Update");
         }
 
         private int DeleteRecords(IDbTransactionProvider transactionProvider)
         {
             return ProcessRecord(transactionProvider, (i => i.Status == DataListItemStatus.Deleted),
-                                 LanguageProvider.Delete);
+                                 LanguageProvider.Delete, "Delete");
         }
 
-        private int ProcessRecord(IDbTransactionProvider transactionProvider, Func<IDataListItem, bool> filter, Func<object, string> action)
+        private int ProcessRecord(IDbTransactionProvider transactionProvider, Func<IDataListItem, bool> filter, Func<object, string> action, string transType)
         {
+            IAutoIncrement identity = null;
+            var resultCount = 0;
             Database.TransactionProvider = transactionProvider;
-            var sb = new StringBuilder();
             foreach (var modelType in _items)
             {
                 var list = modelType.Value.GetItems();
                 var items = list.Where(filter);
                 foreach (var item in items)
                 {
-                    sb.AppendFormat("{0};\n", action(item.Value));
+                    var sql = new StringBuilder();
+                    sql.AppendFormat("{0};\n", action(item.Value));
+                    if (transType == "Insert" && item.Value is IAutoIncrement)
+                    {
+                        sql.AppendFormat("{0};\n", LanguageProvider.GetLastIdentityInsert());
+                        identity = ((IAutoIncrement)item.Value);
+                    }
+                    var result = Database.ExecuteScalarOr<object>(sql.ToString(), 0);
+                    if (identity != null) identity.Id = Convert.ToInt32(result);
+                    resultCount++;
                 }
             }
-            if (sb.Length <= 0) return 0;
-            return Database.ExecuteNonQuery(sb.ToString());
+            return resultCount;
         }
 
         #endregion

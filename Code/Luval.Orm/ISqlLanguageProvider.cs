@@ -23,7 +23,8 @@ namespace Luval.Orm
         string InsertBulk<T>(IEnumerable<T> models);
         string Update<T>(T model);
         string Delete<T>(T model);
-        string Upsert<T>(IEnumerable<T> items); 
+        string Upsert<T>(IEnumerable<T> items);
+        string GetLastIdentityInsert();
 
         #endregion
     }

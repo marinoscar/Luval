@@ -36,6 +36,8 @@ namespace Luval.Orm
         {
             var factory = GetFactoryFromProvider(providerType);
             var conn = factory.CreateConnection();
+            if (string.IsNullOrWhiteSpace(ConnectionString))
+                ConnectionString = DbConfiguration.DefaultConnectionString;
             conn.ConnectionString = ConnectionString;
             return conn;
         }

@@ -90,8 +90,7 @@ namespace Luval.Common
         /// <param name="value">Item Value</param>
         public void SetCacheItem(TKey key, TValue value)
         {
-            if (Internal.ContainsKey(key)) return;
-            Internal.Add(key,value);
+            Internal[key] = value;
         }
 
         public bool ContainsKey(TKey key)

@@ -11,6 +11,7 @@ namespace Luval.Orm
         string ConnectionString { get; }
         IDbTransactionProvider TransactionProvider { get; set; }
         T ExecuteScalar<T>(string query);
+        T ExecuteScalarOr<T>(string query, T defaultValue);
         List<T> ExecuteToList<T>(string query);
         int ExecuteNonQuery(string sqlStatement);
     }

@@ -71,6 +71,11 @@ namespace Luval.Orm
             return sb.ToString();
         }
 
+        public override string GetLastIdentityInsert()
+        {
+            return "SELECT LAST_INSERT_ID()";
+        }
+
         public override bool IsUpsertSupported
         {
             get { return true; }
