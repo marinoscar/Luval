@@ -77,7 +77,12 @@ namespace Luval.Common
         public string GetResource(string resourceName)
         {
             return !_data.ContainsKey(resourceName) ? "!WRONG!" : _data[resourceName];
-        } 
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetAll()
+        {
+            return _data;
+        }
 
         #endregion
 

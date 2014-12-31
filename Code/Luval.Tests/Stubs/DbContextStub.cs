@@ -24,6 +24,11 @@ namespace Luval.Tests.Stubs
             return 1;
         }
 
+        public int SaveChanges(DbTransactionProvider transaction)
+        {
+            return 0;
+        }
+
         public void Add<T>(T item)
         {
             if (ContainsItem<T>(item)) return;

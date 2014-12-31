@@ -23,6 +23,11 @@ namespace Luval.Tests.Stubs
             return default(T);
         }
 
+        public T ExecuteScalarOr<T>(string query, T defaultValue)
+        {
+            return defaultValue;
+        }
+
         public virtual List<T> ExecuteToList<T>(string query)
         {
             return new List<T>();

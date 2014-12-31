@@ -29,6 +29,12 @@ namespace Luval.Security
 
         }
 
+        public UserStoreProvider(IDataContext dataContext)
+            : this(dataContext, new EmptyUserAuthenticationAction())
+        {
+
+        }
+
         public UserStoreProvider(IDataContext dataContext, IUserAuthenticationAction userAuthenticationAction)
         {
             DataContext = dataContext;
@@ -200,7 +206,7 @@ namespace Luval.Security
                     timeStamp.Subtract(user.UtcFailedPasswordAnswerAttemptWindowStart.Value).TotalHours;
                 if (durationSinceWindowStart >= 1 && user.FailedPasswordAttemptCount > 5)
                     user.IsLocked = true;
-                DataContext.Add(user);
+                DataContext.Update(user);
                 DataContext.SaveChanges();
             }
             return isValid ? SignInStatus.Success : SignInStatus.Failure;

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Luval.Common;
 using Luval.Orm.Models;
 using Microsoft.AspNet.Identity;
 
@@ -49,10 +51,18 @@ namespace Luval.Security.Model
         public DateTime? UtcLastLoginDate { get; set; }
         public DateTime? UtcLastLockedOutDate { get; set; }
         public DateTime? UtcLastFailedAttempt { get; set; }
+        [NotMapped]
+        public string Password { get; set; }
 
         public void SetUserId(string userId)
         {
             Id = userId;
+        }
+
+        public DateTime GetUserDate()
+        {
+            var tz = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
         }
 
     }

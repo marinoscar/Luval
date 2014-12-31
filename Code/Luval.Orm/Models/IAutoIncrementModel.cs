@@ -8,7 +8,7 @@ using Luval.Orm.DataAnnotations;
 
 namespace Luval.Orm.Models
 {
-    interface IAutoIncrementModel<T>
+    public interface IAutoIncrementModel<T>
     {
         [Key, AutoIncrement]
         T Id { get; set; }

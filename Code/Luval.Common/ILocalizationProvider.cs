@@ -10,5 +10,6 @@ namespace Luval.Common
     {
         string CultureCode { get; }
         string GetResource(string resourceName);
+        IEnumerable<KeyValuePair<string, string>> GetAll();
     }
 }

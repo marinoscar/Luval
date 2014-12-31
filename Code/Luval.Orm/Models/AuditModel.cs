@@ -2,6 +2,12 @@
 {
     public class AuditModel : AuditModelBasic
     {
+        public AuditModel()
+        {
+            CreatedBy = string.Empty;
+            UpdatedBy = string.Empty;
+        }
+
         /// <summary>
         /// The user id of the user that created the record
         /// </summary>
