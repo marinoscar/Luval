@@ -52,6 +52,8 @@
     <Compile Include="DbContext.cs" />
     <Compile Include="DataList.cs" />
     <Compile Include="DataRecord.cs" />
+    <Compile Include="DbException.cs" />
+    <Compile Include="DbExceptionHandler.cs" />
     <Compile Include="DbLogger.cs" />
     <Compile Include="DbTransactionProvider.cs" />
     <Compile Include="IDatabase.cs" />

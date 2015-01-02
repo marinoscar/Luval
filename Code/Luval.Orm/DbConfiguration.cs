@@ -179,8 +179,11 @@ namespace Luval.Orm
         public static T Get<T>()
         {
             var isRegistered = ObjectContainer.IsRegistered<T>();
-            if(!isRegistered && !_isInitialized)
+            if (!isRegistered && !_isInitialized)
+            {
                 Initialize();
+                isRegistered = ObjectContainer.IsRegistered<T>();
+            }
             if (!isRegistered)
                 return default(T);
             return ObjectContainer.Get<T>();

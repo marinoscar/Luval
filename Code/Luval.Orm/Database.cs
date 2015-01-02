@@ -23,6 +23,7 @@ namespace Luval.Orm
         private static Dictionary<string, List<string>> _typePrimaryFieldNames;
         private readonly IObjectAccesor _objectAccesor;
         private IDbLogger _logger;
+        private readonly IDbExceptionHandler _exceptionHandler;
 
         #endregion
 
@@ -64,6 +65,7 @@ namespace Luval.Orm
             if (TransactionProvider != null)
                 TransactionProvider.ConnectionString = connectionString;
             _objectAccesor = objectAccesor;
+            _exceptionHandler = DbExceptionHandlerFactory.Create(providerType);
         }
 
         #endregion
@@ -273,8 +275,7 @@ namespace Luval.Orm
                         Log("Rolling back transaction");
                         cmd.Transaction.Rollback();
                     }
-                    var dbEx =
-                        new DataException(
+                    var dbEx = _exceptionHandler.Handle(
                             "Error running statement:\n{0}\n{1}\n\n with user {2}".Fi(sqlStatement, ex.Message,
                                                                                       _userName), ex);
                     Log(dbEx.ToString());
