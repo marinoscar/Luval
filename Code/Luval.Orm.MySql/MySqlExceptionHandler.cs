@@ -20,10 +20,18 @@ namespace Luval.Orm.MySql
         {
             if (!(dataException is MySqlException)) return GetEmptyInstance(dataException);
             var mySqlEx = (MySqlException)dataException;
+            switch (mySqlEx.Number)
+            {
+                case 1062:
+                    return HandleUniqueException(message, mySqlEx);
+                case 1451:
+                    return new DbException(message, dataException) { ErrorNumber = 1451, IsForeignKeyViolation = true };
+            }
             if (mySqlEx.Number == 1062)
             {
                 return HandleUniqueException(message, mySqlEx);
             }
+
             return GetEmptyInstance(dataException);
         }
 
