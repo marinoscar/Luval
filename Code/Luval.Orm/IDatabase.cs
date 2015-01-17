@@ -13,6 +13,7 @@ namespace Luval.Orm
         T ExecuteScalar<T>(string query);
         T ExecuteScalarOr<T>(string query, T defaultValue);
         List<T> ExecuteToList<T>(string query);
+        List<Dictionary<string, object>> ExecuteToDictionaryList(string query);
         int ExecuteNonQuery(string sqlStatement);
     }
 }

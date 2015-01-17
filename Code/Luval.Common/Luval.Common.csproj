@@ -55,6 +55,7 @@
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="DateInYear.cs" />
     <Compile Include="DateTimeExtension.cs" />
+    <Compile Include="GuidExtension.cs" />
     <Compile Include="ILocalizationProvider.cs" />
     <Compile Include="IntExtension.cs" />
     <Compile Include="IObjectAccesor.cs" />

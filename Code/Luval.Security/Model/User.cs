@@ -12,20 +12,16 @@ namespace Luval.Security.Model
 
         #region Constructors
 
-        public User() : this(Guid.NewGuid().ToString().Replace("-", "").ToUpperInvariant())
+        public User()
         {
-        } 
-
-        public User(string id)
-        {
-            Id = id;
+            Id = Guid.NewGuid().ToPrettyString();
             IsActive = true;
         } 
 
         #endregion
 
         [Key]
-        public string Id { get; private set; }
+        public string Id { get; set; }
         public string UserName { get; set; }
         public string PrimaryEmail { get; set; }
         public string Name { get; set; }

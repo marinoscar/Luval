@@ -49,5 +49,15 @@ namespace Luval.Common
         {
             return new DateTime(d.Year, 1, 1, 0, 0, 0, 0);
         }
+
+        public static string ToInternationalFormat(this DateTime d)
+        {
+            return d.ToString("yyyy-MM-dd hh:mm:ss");
+        }
+
+        public static string ToInternationalFormatShort(this DateTime d)
+        {
+            return d.ToString("yyyy-MM-dd");
+        }
     }
 }
