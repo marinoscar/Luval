@@ -51,10 +51,10 @@ namespace Luval.Security.Controllers
             switch (result)
             {
                 case SignInStatus.Failure:
-                    ModelState.AddModelError("", "Invalid email or password");
+                    ModelState.AddModelError("", "Correo o contraseña invalidos");
                     return View(loginInfo);
                 case SignInStatus.LockedOut:
-                    ModelState.AddModelError("", "User is locked");
+                    ModelState.AddModelError("", "El usuario fue bloqueado");
                     return View(loginInfo);
             }
             return RedirectToLocal(returnUrl);
