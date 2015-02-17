@@ -66,7 +66,7 @@ namespace Luval.Orm
 
         private static DatabaseProviderType GetProviderTypeFromConfigFile()
         {
-            var providerTypeName = ConfigurationManager.AppSettings["DefaultProviderType"];
+            var providerTypeName = ConfigurationManager.AppSettings["Luval.DbProvider"];
             if (String.IsNullOrWhiteSpace(providerTypeName)) return DatabaseProviderType.MySql;
             DatabaseProviderType providerType;
             var didItWork = Enum.TryParse(providerTypeName, true, out providerType);
@@ -129,7 +129,7 @@ namespace Luval.Orm
 
         private static void InitializeSqlServer()
         {
-            DefaultProviderType = DatabaseProviderType.MySql;
+            DefaultProviderType = DatabaseProviderType.SqlServer;
             ObjectContainer.Register<IDbLogger>(new EmptyDbLogger());
             ObjectContainer.Register<IDbConnectionProvider>(new DbConnectionProvider());
             ObjectContainer.Register<IObjectAccesor>(new FastReflectionObjectAccessor());

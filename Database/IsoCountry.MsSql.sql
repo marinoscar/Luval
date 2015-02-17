@@ -1,13 +1,11 @@
-DROP TABLE IF EXISTS IsoCountry;
-
 CREATE TABLE IsoCountry(
 IsoCode2 CHAR(2) NOT NULL PRIMARY KEY, 
 Name VARCHAR(80) NOT NULL, 
 PrintableName VARCHAR(80) NOT NULL, 
 IsoCode3 CHAR(3), 
-NumericCode SMALLINT ); 
+NumericCode SMALLINT );
 
-('AD','ANDORRA','Andorra','AND',20);
+INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('AD','ANDORRA','Andorra','AND',20);
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('AE','UNITED ARAB EMIRATES','United Arab Emirates','ARE',784);
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('AF','AFGHANISTAN','Afghanistan','AFG',4);
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('AG','ANTIGUA AND BARBUDA','Antigua and Barbuda','ATG',28);
@@ -246,6 +244,3 @@ INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VA
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('ZA','SOUTH AFRICA','South Africa','ZAF',710);
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('ZM','ZAMBIA','Zambia','ZMB',894);
 INSERT INTO IsoCountry (IsoCode2, Name, PrintableName, IsoCode3, NumericCode) VALUES ('ZW','ZIMBABWE','Zimbabwe','ZWE',716);
-
-
-
