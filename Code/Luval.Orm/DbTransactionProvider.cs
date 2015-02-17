@@ -37,9 +37,13 @@ namespace Luval.Orm
 
         public IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
         {
-            if (_connection == null)
-                _connection = GetConnection(_providerType);
-            if(_connection.State == ConnectionState.Closed)
+            return BeginTransaction(null, isolationLevel);
+        }
+
+        public IDbTransaction BeginTransaction(IDbConnection connection, IsolationLevel isolationLevel)
+        {
+            _connection = connection;
+            if (_connection.State == ConnectionState.Closed)
                 _connection.Open();
             if (_transaction == null)
                 _transaction = _connection.BeginTransaction(isolationLevel);

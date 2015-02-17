@@ -261,7 +261,7 @@ namespace Luval.Orm
                 cmd.CommandText = sqlStatement;
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = conn;
-                cmd.Transaction = TransactionProvider.BeginTransaction();
+                cmd.Transaction = TransactionProvider.BeginTransaction(conn, IsolationLevel.ReadCommitted);
                 cmd.CommandTimeout = CommandTimeoutInSeconds;
                 Log("Executing Command\nTimeout: {0}\nOn Transaction:{1}\n\n{2}".Fi(CommandTimeoutInSeconds, cmd.Transaction != null, sqlStatement));
                 try

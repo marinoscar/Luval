@@ -40,6 +40,11 @@ namespace Luval.Orm
             return null;
         }
 
+        public virtual IDbTransaction BeginTransaction(IDbConnection connection, IsolationLevel isolationLevel)
+        {
+            return null;
+        }
+
         public bool ProvideTransaction
         {
             get { return false; }
