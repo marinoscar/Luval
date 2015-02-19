@@ -259,8 +259,6 @@ namespace Luval.Orm
         {
             return WithConnection(conn =>
                 {
-                    object result = null;
-                    var hasTransaction = false;
                     using (var cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = sqlStatement;
@@ -268,10 +266,11 @@ namespace Luval.Orm
                         cmd.Connection = conn;
                         cmd.Transaction = TransactionProvider.BeginTransaction(conn, IsolationLevel.ReadCommitted);
                         cmd.CommandTimeout = CommandTimeoutInSeconds;
+                        var hasTransaction = cmd.Transaction != null;
                         Log("Executing Command\nTimeout: {0}\nOn Transaction:{1}\n\n{2}".Fi(CommandTimeoutInSeconds, cmd.Transaction != null, sqlStatement));
+                        object result = null;
                         try
                         {
-                            hasTransaction = cmd.Transaction != null;
                             result = doSomething(cmd);
                             if (hasTransaction) 
                                 cmd.Transaction.Commit();
