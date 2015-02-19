@@ -55,6 +55,14 @@ namespace Luval.Security.Model
             Id = userId;
         }
 
+        public static User GetDefaultInstance()
+        {
+            return new User()
+                {
+                    IsActive = true, PrimaryEmail = "user@mail.com", UserName = "user@mail.com", Name = "User"
+                };
+        }
+
         public DateTime GetUserDate()
         {
             var tz = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
