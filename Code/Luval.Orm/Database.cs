@@ -243,7 +243,10 @@ namespace Luval.Orm
             if (TransactionProvider.ProvideTransaction)
             {
                 TransactionProvider.ConnectionString = ConnectionString;
-                return doSomething(OpenConnection(TransactionProvider.GetConnection(ProviderType)));
+                using (var tranConnection = OpenConnection(TransactionProvider.GetConnection(ProviderType)))
+                {
+                    return doSomething(tranConnection);
+                }
             }
 
             using (var conn = OpenConnection())
@@ -255,33 +258,40 @@ namespace Luval.Orm
         public object WithCommand(string sqlStatement, Func<IDbCommand, object> doSomething)
         {
             return WithConnection(conn =>
-            {
-
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sqlStatement;
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = conn;
-                cmd.Transaction = TransactionProvider.BeginTransaction(conn, IsolationLevel.ReadCommitted);
-                cmd.CommandTimeout = CommandTimeoutInSeconds;
-                Log("Executing Command\nTimeout: {0}\nOn Transaction:{1}\n\n{2}".Fi(CommandTimeoutInSeconds, cmd.Transaction != null, sqlStatement));
-                try
                 {
-                    return doSomething(cmd);
-                }
-                catch (Exception ex)
-                {
-                    if (cmd.Transaction != null)
+                    object result = null;
+                    var hasTransaction = false;
+                    using (var cmd = conn.CreateCommand())
                     {
-                        Log("Rolling back transaction");
-                        cmd.Transaction.Rollback();
+                        cmd.CommandText = sqlStatement;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = conn;
+                        cmd.Transaction = TransactionProvider.BeginTransaction(conn, IsolationLevel.ReadCommitted);
+                        cmd.CommandTimeout = CommandTimeoutInSeconds;
+                        Log("Executing Command\nTimeout: {0}\nOn Transaction:{1}\n\n{2}".Fi(CommandTimeoutInSeconds, cmd.Transaction != null, sqlStatement));
+                        try
+                        {
+                            hasTransaction = cmd.Transaction != null;
+                            result = doSomething(cmd);
+                            if (hasTransaction) 
+                                cmd.Transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (hasTransaction)
+                            {
+                                Log("Rolling back transaction");
+                                cmd.Transaction.Rollback();
+                            }
+                            var dbEx = _exceptionHandler.Handle(
+                                    "Error running statement:\n{0}\n{1}\n\n with user {2}".Fi(sqlStatement, ex.Message,
+                                                                                              _userName), ex);
+                            Log(dbEx.ToString());
+                            throw dbEx;
+                        }
+                        return result;
                     }
-                    var dbEx = _exceptionHandler.Handle(
-                            "Error running statement:\n{0}\n{1}\n\n with user {2}".Fi(sqlStatement, ex.Message,
-                                                                                      _userName), ex);
-                    Log(dbEx.ToString());
-                    throw dbEx;
-                }
-            });
+                });
         }
 
         public int ExecuteNonQuery(string sqlStatement)
