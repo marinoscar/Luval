@@ -17,5 +17,10 @@ namespace Luval.Orm
         public SqlServerLanguageProvider(ISqlExpressionProvider expressionProvider, IObjectAccesor objectAccesor) : base(expressionProvider, new SqlServerDialectProvider(), objectAccesor)
         {
         }
+
+        public override string GetLastIdentityInsert()
+        {
+            return "SELECT SCOPE_IDENTITY()";
+        }
     }
 }
