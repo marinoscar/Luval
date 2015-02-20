@@ -20,19 +20,19 @@ namespace Luval.Orm.SqlServer
             switch (sqlEx.Number)
             {
                 case 547:
-                    return HandleForeignKey(sqlEx);
+                    return HandleForeignKey(message, sqlEx);
                 case 2601:
-                    return HandleUniqueException(sqlEx);
+                    return HandleUniqueException(message, sqlEx);
                 case 2627:
-                    return HandleUniqueException(sqlEx);
+                    return HandleUniqueException(message, sqlEx);
             }
-            return new DbException(sqlEx.Message, sqlEx)
+            return new DbException(message, sqlEx)
                 {
                     ErrorNumber = sqlEx.Number, Source = sqlEx.Source
                 };
         }
 
-        private DbException HandleUniqueException(SqlException exception)
+        private DbException HandleUniqueException(string message, Exception exception)
         {
             var result = new DbException(exception.Message, exception)
                 {
@@ -41,9 +41,9 @@ namespace Luval.Orm.SqlServer
             return result;
         }
 
-        private DbException HandleForeignKey(SqlException exception)
+        private DbException HandleForeignKey(string message, SqlException exception)
         {
-            var result = new DbException(exception.Message, exception)
+            var result = new DbException(message, exception)
             {
                 IsForeignKeyViolation = true
             };
