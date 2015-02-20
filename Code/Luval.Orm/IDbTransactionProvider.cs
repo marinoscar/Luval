@@ -12,6 +12,8 @@ namespace Luval.Orm
         IDbTransaction BeginTransaction();
         IDbTransaction BeginTransaction(IsolationLevel isolationLevel);
         IDbTransaction BeginTransaction(IDbConnection connection, IsolationLevel isolationLevel);
+        void Commit();
+        void Rollback();
         bool ProvideTransaction { get; }
     }
 }

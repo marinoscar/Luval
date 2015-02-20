@@ -84,7 +84,14 @@ namespace Luval.Orm
 
         public virtual int SaveChanges()
         {
-            return SaveChanges(new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>()));
+            var result = 0;
+            using (var transProvider = new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>()))
+            {
+                result = SaveChanges(transProvider);
+                if (transProvider.ProvideTransaction)
+                    transProvider.Commit();
+            }
+            return result;
         }
 
         public virtual int SaveChanges(DbTransactionProvider transaction)

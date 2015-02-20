@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Luval.Orm
 {
-    public interface IDatabase
+    public interface IDatabase : IDisposable
     {
         string ConnectionString { get; }
         IDbTransactionProvider TransactionProvider { get; set; }

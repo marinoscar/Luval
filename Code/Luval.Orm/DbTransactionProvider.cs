@@ -12,8 +12,13 @@ namespace Luval.Orm
 
         private IDbConnection _connection;
         private readonly IDbConnectionProvider _connectionProvider;
-        private DatabaseProviderType _providerType;
+        private readonly DatabaseProviderType _providerType;
         private IDbTransaction _transaction;
+
+        public void Rollback()
+        {
+            if (_transaction != null) _transaction.Rollback();
+        }
 
         public bool ProvideTransaction
         {
@@ -43,6 +48,8 @@ namespace Luval.Orm
         public IDbTransaction BeginTransaction(IDbConnection connection, IsolationLevel isolationLevel)
         {
             _connection = connection;
+            if(_connection == null)
+                _connection = GetConnection(_providerType);
             if (_connection.State == ConnectionState.Closed)
                 _connection.Open();
             if (_transaction == null)
@@ -50,8 +57,14 @@ namespace Luval.Orm
             return _transaction;
         }
 
+        public void Commit()
+        {
+            if(_transaction != null) _transaction.Commit();
+        }
+
         public IDbConnection GetConnection(DatabaseProviderType providerType)
         {
+            if (_connection != null) return _connection;
             _connectionProvider.ConnectionString = ConnectionString;
             return _connectionProvider.GetConnection(providerType);
         }
