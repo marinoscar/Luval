@@ -97,6 +97,8 @@ namespace Luval.Orm
 
         public void Dispose()
         {
+            if(_transaction != null && _isTransactionActive)
+                _transaction.Commit();
             if (_transaction != null)
                 _transaction.Dispose();
             _transaction = null;
