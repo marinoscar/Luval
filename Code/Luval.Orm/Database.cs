@@ -24,7 +24,6 @@ namespace Luval.Orm
         private readonly IObjectAccesor _objectAccesor;
         private IDbLogger _logger;
         private readonly IDbExceptionHandler _exceptionHandler;
-
         #endregion
 
         #region Constructors
@@ -55,15 +54,18 @@ namespace Luval.Orm
 
             var connString = new DbConnectionStringBuilder { ConnectionString = connectionString };
 
+            if(providerType == DatabaseProviderType.SqlServer)
+                connString.Add("Application Name", GetApplicationName());
+
             _userName = GetUserIdFromConnStringObject(connString);
             _serverName = GetServerFromConnStringObject(connString);
             _databaseName = GetDatabaseFromConnStringObject(connString);
-            _connectionString = connectionString;
+            _connectionString = connString.ToString();
 
             CommandTimeoutInSeconds = DbConfiguration.DatabaseCommandTimeout;
             TransactionProvider = transactionProvider;
             if (TransactionProvider != null)
-                TransactionProvider.ConnectionString = connectionString;
+                TransactionProvider.ConnectionString = _connectionString;
             _objectAccesor = objectAccesor;
             _exceptionHandler = DbExceptionHandlerFactory.Create(providerType);
         }
@@ -240,6 +242,8 @@ namespace Luval.Orm
 
         public object WithConnection(Func<IDbConnection, object> doSomething)
         {
+            object result = null;
+
             if (TransactionProvider.ProvideTransaction)
             {
                 TransactionProvider.ConnectionString = ConnectionString;
@@ -249,8 +253,11 @@ namespace Luval.Orm
 
             using (var conn = OpenConnection())
             {
-                return doSomething(conn);
+                result = doSomething(conn);
+                conn.Close();
             }
+
+            return result;
         }
 
         public object WithCommand(string sqlStatement, Func<IDbCommand, object> doSomething)
@@ -299,6 +306,12 @@ namespace Luval.Orm
         #endregion
 
         #region Private Methods
+
+        private string GetApplicationName()
+        {
+            var appName = ConfigurationManager.AppSettings["Luval.Orm.AppName"];
+            return string.IsNullOrWhiteSpace(appName) ? "Luval Orm" : appName;
+        }
 
         private void Log(string message)
         {
@@ -395,6 +408,14 @@ namespace Luval.Orm
         {
             TransactionProvider.ConnectionString = ConnectionString;
             return OpenConnection(TransactionProvider.GetConnection(ProviderType));
+        }
+
+        private void CloseConnection()
+        {
+            var conn = TransactionProvider.GetConnection(ProviderType);
+            if (conn == null) return;
+            if (conn.State == ConnectionState.Open)
+                conn.Close();
         }
 
         private IDbConnection OpenConnection(IDbConnection conn)

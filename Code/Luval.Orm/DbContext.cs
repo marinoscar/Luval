@@ -97,6 +97,8 @@ namespace Luval.Orm
         public virtual int SaveChanges(DbTransactionProvider transaction)
         {
             var count = 0;
+            var originalTransProvider = Database.TransactionProvider;
+            Database.TransactionProvider = transaction;
             count += DeleteRecords(transaction);
             count += InsertRecords(transaction);
             count += UpdateRecords(transaction);
@@ -107,6 +109,7 @@ namespace Luval.Orm
                     valueItem.Status = DataListItemStatus.Unchanged;
                 }
             }
+            Database.TransactionProvider = originalTransProvider;
             return count;
         }
 
@@ -187,7 +190,6 @@ namespace Luval.Orm
         {
             IAutoIncrement identity = null;
             var resultCount = 0;
-            Database.TransactionProvider = transactionProvider;
             foreach (var modelType in _items)
             {
                 var list = modelType.Value.GetItems();
