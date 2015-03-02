@@ -48,7 +48,7 @@ namespace Luval.Common
             {
                 result = GetPropertyValue<T>(target, propertyName);
             }
-            finally
+            catch(Exception)
             {
             }
             return result;

@@ -222,8 +222,8 @@ namespace Luval.Security
         {
             var user = FindByName(userName);
             var result = SignInStatus.Success;
-            if (user == null) result = SignInStatus.Failure;
-            if (user != null && result != SignInStatus.Failure && user.IsLocked) result = SignInStatus.LockedOut;
+            if (user == null) return SignInStatus.Failure;
+            if (user.IsLocked) result = SignInStatus.LockedOut;
             result = AreValidCredentials(user, password);
             if (result != SignInStatus.Success)
             {

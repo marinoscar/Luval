@@ -8,11 +8,9 @@ namespace Luval.Common
 {
     public static class DateTimeExtension
     {
-        private static readonly DateTime EpochStart = new DateTime(1970, 1, 1);
-
         public static uint ToEpoch(this DateTime d)
         {
-            return (uint)d.Subtract(EpochStart).TotalMilliseconds;
+            return (uint)d.Subtract(MinDate).TotalMilliseconds;
         }
 
         public static uint ToInt(this DateTime d)
@@ -58,6 +56,16 @@ namespace Luval.Common
         public static string ToInternationalFormatShort(this DateTime d)
         {
             return d.ToString("yyyy-MM-dd");
+        }
+
+        public static DateTime MinDate
+        {
+            get { return new DateTime(1970, 1, 1); }
+        }
+
+        public static DateTime MaxDate
+        {
+            get { return DateTime.MaxValue; }
         }
     }
 }
