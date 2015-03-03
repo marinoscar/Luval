@@ -78,7 +78,7 @@ namespace Luval.Common
             {
                 SetPropertyValue(target,propertyName,value);
             }
-            finally
+            catch(Exception)
             { }
         }
     }
