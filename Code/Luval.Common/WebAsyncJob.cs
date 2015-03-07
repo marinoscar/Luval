@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 
@@ -32,7 +29,14 @@ namespace Luval.Common
 
         public void ExecuteAsync()
         {
-            Task.Factory.StartNew(_job);
+            lock (_lock)
+            {
+                if (_shuttingDown)
+                {
+                    return;
+                }
+                Task.Factory.StartNew(_job);
+            }
         }
     }
 }
