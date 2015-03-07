@@ -8,14 +8,10 @@ namespace Luval.Common
     {
         private readonly object _lock = new object();
         private bool _shuttingDown;
-        private readonly Action _job;
 
-        public Object Target { get; private set; }
-
-        public WebAsyncJob(Action job, object target)
+        public WebAsyncJob()
         {
-            _job = job;
-            Target = target;
+            HostingEnvironment.RegisterObject(this);
         }
 
         public void Stop(bool immediate)
@@ -27,15 +23,18 @@ namespace Luval.Common
             HostingEnvironment.UnregisterObject(this);
         }
 
-        public void ExecuteAsync()
+        public void Execute(Task task)
         {
+            if (task == null) return;
             lock (_lock)
             {
                 if (_shuttingDown)
                 {
                     return;
                 }
-                Task.Factory.StartNew(_job);
+
+                if(task.Status == TaskStatus.Created)
+                    task.Start();
             }
         }
     }
