@@ -27,11 +27,11 @@ namespace Luval.Tests.Security
         {
             return new List<User>()
                 {
-                    new User("user1") { UserName = "user1", PrimaryEmail = "user1@user.com", IsActive = true, IsLocked = false},
-                    new User("user2") { UserName = "user2", PrimaryEmail = "user2@user.com", IsActive = false, IsLocked = false},
-                    new User("user3") { UserName = "user3", PrimaryEmail = "user3@user.com", IsActive = true, IsLocked = false},
-                    new User("user4") { UserName = "user4", PrimaryEmail = "user4@user.com", IsActive = true, IsLocked = false},
-                    new User("user5") { UserName = "user5", PrimaryEmail = "user5@user.com", IsActive = false, IsLocked = false},
+                    new User() { UserName = "user1", PrimaryEmail = "user1@user.com", IsActive = true, IsLocked = false},
+                    new User() { UserName = "user2", PrimaryEmail = "user2@user.com", IsActive = false, IsLocked = false},
+                    new User() { UserName = "user3", PrimaryEmail = "user3@user.com", IsActive = true, IsLocked = false},
+                    new User() { UserName = "user4", PrimaryEmail = "user4@user.com", IsActive = true, IsLocked = false},
+                    new User() { UserName = "user5", PrimaryEmail = "user5@user.com", IsActive = false, IsLocked = false},
                 };
         }
 

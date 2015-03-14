@@ -36,6 +36,19 @@ namespace Luval.Tests.Stubs
             return new DbTransactionStub(new DbConnection());
         }
 
+        public IDbTransaction BeginTransaction(IDbConnection connection, IsolationLevel isolationLevel)
+        {
+            return new DbTransactionStub(connection, isolationLevel);
+        }
+
+        public void Commit()
+        {
+        }
+
+        public void Rollback()
+        {
+        }
+
         public bool ProvideTransaction { get; private set; }
     }
 }

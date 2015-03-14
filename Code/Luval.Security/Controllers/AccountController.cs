@@ -45,17 +45,17 @@ namespace Luval.Security.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(loginInfo);
+                return await Task.Factory.StartNew(() => View(loginInfo));
             }
             var result = StoreProvider.SignInPassword(loginInfo.UserName, loginInfo.UserPassword, loginInfo.RememberMe, OwinContext);
             switch (result)
             {
                 case SignInStatus.Failure:
                     ModelState.AddModelError("", "Correo o contraseña invalidos");
-                    return View(loginInfo);
+                    return await  Task.Factory.StartNew(() => View(loginInfo));
                 case SignInStatus.LockedOut:
                     ModelState.AddModelError("", "El usuario fue bloqueado");
-                    return View(loginInfo);
+                    return await Task.Factory.StartNew(() => View(loginInfo));
             }
             return RedirectToLocal(returnUrl);
         }

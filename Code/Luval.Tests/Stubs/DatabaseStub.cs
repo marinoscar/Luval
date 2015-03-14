@@ -33,9 +33,18 @@ namespace Luval.Tests.Stubs
             return new List<T>();
         }
 
+        public List<Dictionary<string, object>> ExecuteToDictionaryList(string query)
+        {
+            return new List<Dictionary<string, object>>();
+        }
+
         public int ExecuteNonQuery(string sqlStatement)
         {
             return 0;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

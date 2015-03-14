@@ -16,7 +16,7 @@ namespace Luval.Security.Model
         {
             Id = Guid.NewGuid().ToPrettyString();
             IsActive = true;
-        } 
+        }
 
         #endregion
 
