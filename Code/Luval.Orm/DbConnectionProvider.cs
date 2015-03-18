@@ -41,5 +41,11 @@ namespace Luval.Orm
             conn.ConnectionString = ConnectionString;
             return conn;
         }
+
+        public IDbDataAdapter GetAdapter(DatabaseProviderType providerType)
+        {
+            var factory = GetFactoryFromProvider(providerType);
+            return factory.CreateDataAdapter();
+        }
     }
 }

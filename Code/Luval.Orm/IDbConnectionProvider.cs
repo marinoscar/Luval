@@ -11,5 +11,6 @@ namespace Luval.Orm
     {
         string ConnectionString { get; set; }
         IDbConnection GetConnection(DatabaseProviderType providerType);
+        IDbDataAdapter GetAdapter(DatabaseProviderType providerType);
     }
 }

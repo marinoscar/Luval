@@ -93,6 +93,11 @@ namespace Luval.Orm
             return _connectionProvider.GetConnection(providerType);
         }
 
+        public IDbDataAdapter GetAdapter(DatabaseProviderType providerType)
+        {
+            return _connectionProvider.GetAdapter(providerType);
+        }
+
         public string ConnectionString { get; set; }
 
         public void Dispose()

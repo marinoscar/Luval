@@ -140,6 +140,7 @@ namespace Luval.Orm
 
         #region Public Methods
 
+        #region Execution Methods
         public T ExecuteScalar<T>(string query)
         {
             return (T)WithCommand(query, command =>
@@ -240,6 +241,26 @@ namespace Luval.Orm
             return list;
         }
 
+        public int ExecuteNonQuery(string sqlStatement)
+        {
+            return (int)WithCommand(sqlStatement, command => command.ExecuteNonQuery());
+        }
+
+        public DataSet ExecuteToDataSet(string sqlStatement)
+        {
+            var ds = new DataSet();
+            WithCommand(sqlStatement, command =>
+            {
+                var adapter = TransactionProvider.GetAdapter(ProviderType);
+                adapter.SelectCommand = command;
+                adapter.Fill(ds);
+                return new object();
+            });
+            return ds;
+        }
+
+        #endregion
+
         public object WithConnection(Func<IDbConnection, object> doSomething)
         {
             object result = null;
@@ -293,10 +314,6 @@ namespace Luval.Orm
                 });
         }
 
-        public int ExecuteNonQuery(string sqlStatement)
-        {
-            return (int)WithCommand(sqlStatement, command => command.ExecuteNonQuery());
-        }
 
         public void TestConnection()
         {

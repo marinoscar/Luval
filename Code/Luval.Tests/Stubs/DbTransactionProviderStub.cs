@@ -22,6 +22,11 @@ namespace Luval.Tests.Stubs
             return new DbConnection();
         }
 
+        public IDbDataAdapter GetAdapter(DatabaseProviderType providerType)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
         }
