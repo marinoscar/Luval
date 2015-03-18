@@ -110,3 +110,5 @@ UpgradeLog*.XML
 # Build Folder
 Build/Debug
 Build/Release
+Code/UpgradeLog.htm
+Code/UpgradeLog2.htm
