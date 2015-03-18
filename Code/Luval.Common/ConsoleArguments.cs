@@ -24,7 +24,7 @@ namespace Luval.Common
         {
             if (!ContainsSwitch(name)) return null;
             var switchIndex = _args.IndexOf(name);
-            if (_args.Count < switchIndex + 1) return null;
+            if ((_args.Count - 1) < switchIndex + 1) return null;
             return _args[switchIndex + 1];
         }
     }
