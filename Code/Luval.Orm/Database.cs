@@ -141,9 +141,15 @@ namespace Luval.Orm
         #region Public Methods
 
         #region Execution Methods
+
         public T ExecuteScalar<T>(string query)
         {
-            return (T)WithCommand(query, command =>
+            return ExecuteScalar<T>(query, null);
+        }
+
+        public T ExecuteScalar<T>(string query, IEnumerable<IDbDataParameter> parameters)
+        {
+            return (T)WithCommand(query, parameters, command =>
             {
                 var result = command.ExecuteScalar();
                 if (Convert.DBNull == result)
@@ -163,10 +169,27 @@ namespace Luval.Orm
             });
         }
 
+        public T ExecuteScalarOr<T>(string query, T defaultOnFailure)
+        {
+            return ExecuteScalarOr<T>(query, null, defaultOnFailure);
+        }
+
+        public T ExecuteScalarOr<T>(string query, IEnumerable<IDbDataParameter> parameters, T defaultOnFailure)
+        {
+            bool success;
+            var result = TryExecuteScalar<T>(query, parameters, out success);
+            return success ? result : defaultOnFailure;
+        }
+
         public T TryExecuteScalar<T>(string query, out bool gotData)
         {
+            return TryExecuteScalar<T>(query, null, out gotData);
+        }
+
+        public T TryExecuteScalar<T>(string query, IEnumerable<IDbDataParameter> parameters, out bool gotData)
+        {
             var closureGotData = false;
-            var result = (T)WithCommand(query, command =>
+            var result = (T)WithCommand(query, parameters, command =>
             {
                 var returnedValue = command.ExecuteScalar();
                 if (Convert.IsDBNull(returnedValue) || null == returnedValue)
@@ -181,16 +204,14 @@ namespace Luval.Orm
             return result;
         }
 
-        public T ExecuteScalarOr<T>(string query, T defaultOnFailure)
-        {
-            bool success;
-            var result = TryExecuteScalar<T>(query, out success);
-            return success ? result : defaultOnFailure;
-        }
-
         public void WhileReading(string query, Action<IDataReader> doSomething)
         {
-            WithDataReader(query, CommandBehavior.Default, r =>
+            WhileReading(query, null, doSomething);
+        }
+
+        public void WhileReading(string query, IEnumerable<IDbDataParameter> parameters, Action<IDataReader> doSomething)
+        {
+            WithDataReader(query, CommandBehavior.Default, parameters, r =>
             {
                 while (r.Read())
                 {
@@ -208,7 +229,12 @@ namespace Luval.Orm
 
         public object WithDataReader(string query, CommandBehavior behavior, Func<IDataReader, object> doSomething)
         {
-            return WithCommand(query, command =>
+            return WithDataReader(query, behavior, null, doSomething);
+        }
+
+        public object WithDataReader(string query, CommandBehavior behavior, IEnumerable<IDbDataParameter> parameters, Func<IDataReader, object> doSomething)
+        {
+            return WithCommand(query, parameters, command =>
             {
                 using (var r = command.ExecuteReader(behavior))
                 {
@@ -219,10 +245,15 @@ namespace Luval.Orm
 
         public List<T> ExecuteToList<T>(string query)
         {
+            return ExecuteToList<T>(query, null);
+        }
+
+        public List<T> ExecuteToList<T>(string query, IEnumerable<IDbDataParameter> parameters)
+        {
             var type = typeof(T);
             var list = new List<T>();
             IEnumerable<string> names = null;
-            WhileReading(query, r =>
+            WhileReading(query, parameters, r =>
             {
                 if (names == null)
                     names = r.GetNames();
@@ -236,20 +267,35 @@ namespace Luval.Orm
 
         public List<Dictionary<string, object>> ExecuteToDictionaryList(string query)
         {
+            return ExecuteToDictionaryList(query, null);
+        }
+
+        public List<Dictionary<string, object>> ExecuteToDictionaryList(string query, IEnumerable<IDbDataParameter> parameters)
+        {
             var list = new List<Dictionary<string, object>>();
-            WhileReading(query, r => list.Add(r.ToDictionary()));
+            WhileReading(query, parameters,  r => list.Add(r.ToDictionary()));
             return list;
         }
 
         public int ExecuteNonQuery(string sqlStatement)
         {
-            return (int)WithCommand(sqlStatement, command => command.ExecuteNonQuery());
+            return ExecuteNonQuery(sqlStatement, null);
+        }
+
+        public int ExecuteNonQuery(string sqlStatement, IEnumerable<IDbDataParameter> parameters)
+        {
+            return (int)WithCommand(sqlStatement, parameters, command => command.ExecuteNonQuery());
         }
 
         public DataSet ExecuteToDataSet(string sqlStatement)
         {
+            return ExecuteToDataSet(sqlStatement, null);
+        }
+
+        public DataSet ExecuteToDataSet(string sqlStatement, IEnumerable<IDbDataParameter> parameters)
+        {
             var ds = new DataSet();
-            WithCommand(sqlStatement, command =>
+            WithCommand(sqlStatement, parameters, command =>
             {
                 var adapter = TransactionProvider.GetAdapter(ProviderType);
                 adapter.SelectCommand = command;
@@ -283,14 +329,27 @@ namespace Luval.Orm
 
         public object WithCommand(string sqlStatement, Func<IDbCommand, object> doSomething)
         {
+            return WithCommand(sqlStatement, CommandType.Text, new IDbDataParameter[] { }, doSomething);
+        }
+
+        public object WithCommand(string sqlStatement, IEnumerable<IDbDataParameter> parameters, Func<IDbCommand, object> doSomething)
+        {
+            var type = (parameters != null && parameters.Any()) ? CommandType.StoredProcedure : CommandType.Text;
+            return WithCommand(sqlStatement, type, parameters, doSomething);
+        }
+
+        public object WithCommand(string sqlStatement, CommandType type, IEnumerable<IDbDataParameter> parameters, Func<IDbCommand, object> doSomething)
+        {
             return WithConnection(conn =>
                 {
                     var cmd = conn.CreateCommand();
                     cmd.CommandText = sqlStatement;
-                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandType = type;
                     cmd.Connection = conn;
                     cmd.Transaction = TransactionProvider.BeginTransaction(conn, IsolationLevel.ReadCommitted);
                     cmd.CommandTimeout = CommandTimeoutInSeconds;
+                    if(parameters != null && parameters.Any())
+                        parameters.ToList().ForEach(p => cmd.Parameters.Add(p));
                     Log("Executing Command\nTimeout: {0}\nOn Transaction:{1}\n\n{2}".Fi(CommandTimeoutInSeconds, cmd.Transaction != null, sqlStatement));
                     object result = null;
                     try
