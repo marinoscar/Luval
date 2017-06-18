@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Luval.Common;
+using Luval.Reflection;
 
 namespace Luval.Orm
 {

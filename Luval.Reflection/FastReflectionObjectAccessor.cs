@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Fasterflect;
 using System.Reflection;
+using Luval.Common;
 
-namespace Luval.Common
+namespace Luval.Reflection
 {
     public class FastReflectionObjectAccessor : IObjectAccesor
     {

@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}</ProjectGuid>
+    <ProjectGuid>{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Luval.Tests</RootNamespace>
-    <AssemblyName>Luval.Tests</AssemblyName>
+    <RootNamespace>Luval.Reflection</RootNamespace>
+    <AssemblyName>Luval.Reflection</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,12 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.2.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="Fasterflect, Version=2.1.3.0, Culture=neutral, PublicKeyToken=38d18473284c1ca7, processorArchitecture=MSIL">
+      <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -45,40 +40,24 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FastReflectionObjectAccessor.cs" />
+    <Compile Include="IObjectAccesor.cs" />
+    <Compile Include="IObjectCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SampleTest.cs" />
-    <Compile Include="Security\WhenUserManagerIsUsed.cs" />
-    <Compile Include="Stubs\DatabaseStub.cs" />
-    <Compile Include="Stubs\DataReader.cs" />
-    <Compile Include="Stubs\DbCommand.cs" />
-    <Compile Include="Stubs\DbConnection.cs" />
-    <Compile Include="Stubs\DbContextStub.cs" />
-    <Compile Include="Stubs\DbDataParameter.cs" />
-    <Compile Include="Stubs\DbTransactionProviderStub.cs" />
-    <Compile Include="Stubs\DbTransactionStub.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Luval.Common\Luval.Common.csproj">
+    <ProjectReference Include="..\Code\Luval.Common\Luval.Common.csproj">
       <Project>{31df6c48-7a79-4530-a778-396deb5a8dea}</Project>
       <Name>Luval.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Luval.Orm\Luval.Orm.csproj">
-      <Project>{a20163b7-c57b-4780-af21-8cb688fc4288}</Project>
-      <Name>Luval.Orm</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Luval.Security\Luval.Security.csproj">
-      <Project>{657cd80a-3161-4595-b8a7-ff3f48b2aa86}</Project>
-      <Name>Luval.Security</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.Security", "Code\Luva
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.Tests", "Code\Luval.Tests\Luval.Tests.csproj", "{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.Reflection", "Luval.Reflection\Luval.Reflection.csproj", "{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,12 @@ Global
 		{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}.Prod|Any CPU.Build.0 = Release|Any CPU
 		{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AF0682B-C3A2-4F0E-8821-4459FA59D2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Prod|Any CPU.ActiveCfg = Release|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Prod|Any CPU.Build.0 = Release|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E3DBCA-2A1B-412C-811B-AAFE8C69ADA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
