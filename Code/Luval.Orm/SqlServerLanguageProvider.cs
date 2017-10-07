@@ -64,7 +64,6 @@ namespace Luval.Orm
             return sb.ToString();
         }
 
-        public string 
 
         public override bool IsUpsertSupported { get { return true; } }
 

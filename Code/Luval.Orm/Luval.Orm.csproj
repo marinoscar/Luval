@@ -97,6 +97,7 @@
     <Compile Include="SqlLanguageProviderFactory.cs" />
     <Compile Include="SqlLanguageProviderHelper.cs" />
     <Compile Include="SqlServerLanguageProvider.cs" />
+    <Compile Include="SqlServerTypeMapping.cs" />
     <Compile Include="TableDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
