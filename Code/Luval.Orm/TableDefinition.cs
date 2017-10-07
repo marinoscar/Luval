@@ -52,7 +52,7 @@ namespace Luval.Orm
             return Columns.Where(i => !i.IsAutoIncrement);
         }
 
-        public IEnumerable<ColumnDefinition> GetNonKeyColumns()
+        public IEnumerable<ColumnDefinition> GetNonPrimaryKeyColumns()
         {
             return Columns.Where(i => !i.IsKey);
         }
