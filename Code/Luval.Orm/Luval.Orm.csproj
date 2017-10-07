@@ -55,7 +55,9 @@
     <Compile Include="AnsiSqlLanguageProvider.cs" />
     <Compile Include="CountryRepository.cs" />
     <Compile Include="DataAnnotations\AutoIncrementAttribute.cs" />
+    <Compile Include="DataAnnotations\IgnoreAttribute.cs" />
     <Compile Include="DataAnnotations\RelationAttribute.cs" />
+    <Compile Include="DataAnnotations\UniqueAttribute.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DbConfiguration.cs" />
     <Compile Include="DbConnectionProvider.cs" />
