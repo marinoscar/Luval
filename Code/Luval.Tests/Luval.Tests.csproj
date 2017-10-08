@@ -69,10 +69,6 @@
       <Project>{a20163b7-c57b-4780-af21-8cb688fc4288}</Project>
       <Name>Luval.Orm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Luval.Security\Luval.Security.csproj">
-      <Project>{657cd80a-3161-4595-b8a7-ff3f48b2aa86}</Project>
-      <Name>Luval.Security</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
