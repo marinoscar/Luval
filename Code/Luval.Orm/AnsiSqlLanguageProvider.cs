@@ -68,6 +68,7 @@ namespace Luval.Orm
         {
             var modelType = typeof (T);
             var tableDef = _helper.GetTableDefinition(modelType);
+            if (expression == null) return string.Format("SELECT * FROM {0}", _helper.GetQualifiedTableName(tableDef));
             var sb = new StringBuilder();
             sb.AppendFormat("{0}\n",QueryBeginComment);
             sb.AppendFormat("SELECT {0}\n",SelectBeginComment);

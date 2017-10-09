@@ -33,7 +33,7 @@ namespace Luval.Orm
             var itemType = items.First().GetType();
             var tableDef = _helper.GetTableDefinition(itemType);
             var matchCriteriaArray = tableDef.GetUniqueKeys().Select(i => string.Format("S.{0} = T.{0}", i.ColumnName)).ToList();
-            var updateStatements = tableDef.GetNonPrimaryKeyColumns().Select(i => string.Format("T.{0} = S.{0}", i.ColumnName)).ToArray();
+            var updateStatements = tableDef.Columns.Where(i => !i.IsUnique && !i.IsKey).Select(i => string.Format("T.{0} = S.{0}", i.ColumnName)).ToArray();
             var sb = new StringBuilder();
             sb.AppendLine(GetTableVariable(tableDef));
             foreach(var item in items)
@@ -42,15 +42,15 @@ namespace Luval.Orm
                 sb.AppendFormat("INSERT INTO @TV_{0} VALUES ({1})\n", tableDef.TableName, string.Join(",", values));
             }
             sb.AppendLine();
-            sb.AppendFormat("MERGE {0} T\nUSING @TV_{0} S\n", _helper.GetQualifiedTableName(tableDef), tableDef.TableName);
-            sb.AppendFormat("ON ({0})\n", string.Join(",", matchCriteriaArray));
+            sb.AppendFormat("MERGE {0} T\nUSING @TV_{1} S\n", _helper.GetQualifiedTableName(tableDef), tableDef.TableName);
+            sb.AppendFormat("ON ({0})\n", string.Join(" And ", matchCriteriaArray));
             sb.AppendFormat("WHEN MATCHED\n\tTHEN UPDATE\n\tSET\n");
             sb.AppendFormat("\t\t\t{0}\n", string.Join(",", updateStatements));
             sb.AppendFormat("WHEN NOT MATCHED BY TARGET\nTHEN INSERT\n");
             sb.AppendFormat("\t({0})\n", string.Join(",", tableDef.GetNonPrimaryKeyColumns().Select(i => i.ColumnName)));
             sb.AppendFormat("\tVALUES\n\t({0})\n", string.Join(",", tableDef.GetNonPrimaryKeyColumns().Select(i => string.Format("S.{0}", i.ColumnName))));
             sb.AppendLine(";");
-            return null;
+            return sb.ToString();
         }
 
 

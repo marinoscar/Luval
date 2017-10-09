@@ -68,10 +68,10 @@ namespace Luval.Orm
         private static DatabaseProviderType GetProviderTypeFromConfigFile()
         {
             var providerTypeName = ConfigurationManager.AppSettings["Luval.DbProvider"];
-            if (String.IsNullOrWhiteSpace(providerTypeName)) return DatabaseProviderType.MySql;
+            if (String.IsNullOrWhiteSpace(providerTypeName)) return DatabaseProviderType.SqlServer;
             DatabaseProviderType providerType;
             var didItWork = Enum.TryParse(providerTypeName, true, out providerType);
-            return didItWork ? providerType : DatabaseProviderType.MySql;
+            return didItWork ? providerType : DatabaseProviderType.SqlServer;
         } 
 
         private static int GetCommandTimeoutFromConfigFile()

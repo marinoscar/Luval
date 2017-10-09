@@ -90,13 +90,14 @@ namespace Luval.Orm
                 column.Table = this;
                 AddColumn(column);
             }
-            if(!Keys.Any())
+            if (!Keys.Any())
                 throw new ArgumentException("The entity {0} does not have a key defined".Fi(TableType.Name));
         }
 
         private ColumnDefinition GetColumnFromProperty(PropertyInfo property)
         {
             var key = property.GetCustomAttribute<KeyAttribute>();
+            var unique = property.GetCustomAttribute<UniqueAttribute>();
             var columnInfo = property.GetCustomAttribute<ColumnAttribute>();
             var autoNumeric = property.GetCustomAttribute<AutoIncrementAttribute>();
             var columnName = columnInfo != null ? columnInfo.Name : property.Name;
@@ -105,6 +106,7 @@ namespace Luval.Orm
                 ColumnName = columnName,
                 FieldName = property.Name,
                 IsKey = (key != null || (property.Name.Equals("Id") && property.PropertyType == typeof(int))),
+                IsUnique = (unique != null),
                 IsAutoIncrement = (autoNumeric != null) || (property.Name.Equals("Id") && property.PropertyType == typeof(int))
 
             };
