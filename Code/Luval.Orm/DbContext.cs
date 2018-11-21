@@ -85,7 +85,7 @@ namespace Luval.Orm
         public virtual int SaveChanges()
         {
             var result = 0;
-            using (var transProvider = new DbTransactionProvider(DbConfiguration.Get<IDbConnectionProvider>()))
+            using (var transProvider = this.Database.TransactionProvider)
             {
                 result = SaveChanges(transProvider);
                 if (transProvider.ProvideTransaction)
@@ -94,7 +94,7 @@ namespace Luval.Orm
             return result;
         }
 
-        public virtual int SaveChanges(DbTransactionProvider transaction)
+        public virtual int SaveChanges(IDbTransactionProvider transaction)
         {
             var count = 0;
             var originalTransProvider = Database.TransactionProvider;

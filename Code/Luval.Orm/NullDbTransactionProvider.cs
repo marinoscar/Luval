@@ -27,7 +27,9 @@ namespace Luval.Orm
 
         public IDbConnection GetConnection(DatabaseProviderType providerType)
         {
-            return _connectionProvider.GetConnection(providerType);
+            var cnn = _connectionProvider.GetConnection(providerType);
+            cnn.ConnectionString = ConnectionString;
+            return cnn;
         }
 
         public IDbDataAdapter GetAdapter(DatabaseProviderType providerType)

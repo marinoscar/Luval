@@ -11,7 +11,7 @@ namespace Luval.Orm
     {
         IDatabase Database { get; }
         int SaveChanges();
-        int SaveChanges(DbTransactionProvider transaction);
+        int SaveChanges(IDbTransactionProvider transaction);
         void Add<T>(T item);
         void Update<T>(T item);
         void Remove<T>(T item);
